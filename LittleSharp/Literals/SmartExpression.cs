@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 
-namespace LittleSharp
+namespace LittleSharp.Variables
 {
 	public abstract class SmartExpression
 	{
@@ -29,7 +30,7 @@ namespace LittleSharp
 		// array access overload
 		public ArrayAccess this[SmartExpression<int> i]
 		{
-			get { return new ArrayAccess(Expression.ArrayAccess(this.Expression, i.Expression)); }
+			get { return new ArrayAccess(Expression.ArrayAccess(Expression, i.Expression)); }
 		}
 
 		public ArrayAccess<TItem> ArrayAccess<TItem>(SmartExpression<int> index)
@@ -47,6 +48,15 @@ namespace LittleSharp
 			return new SmartExpression<T>(Expression.Constant(value));
 		}
 
+		public SmartExpression<T> Call(MethodInfo method, params SmartExpression[] parameters)
+		{
+			return new SmartExpression<T>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
+		}
+
+		public SmartExpression<T> Field(FieldInfo field)
+		{
+			return new SmartExpression<T>(Expression.Field(Expression, field));
+		}
 
 		#region Operators
 		public static SmartExpression<T> operator +(SmartExpression<T> a, SmartExpression<T> b)

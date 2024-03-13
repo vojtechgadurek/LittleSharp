@@ -1,9 +1,13 @@
-﻿using LittleSharp;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using LittleSharp.Variables;
 
-namespace LittleSharp
+namespace LittleSharp.Callables
 {
-
 
 	public class ParameterValuePairs()
 	{
@@ -12,6 +16,17 @@ namespace LittleSharp
 		{
 			Pairs.Add((variable, value));
 			return this;
+		}
+	}
+
+	public class Lambda<T> : Lambda
+	{
+		public readonly SmartExpression<NoneType> OutputExpression;
+		public readonly Variable<T> Output = new Variable<T>("Return");
+
+		public Lambda(string? functionName = null) : base(functionName)
+		{
+			OutputExpression = new SmartExpression<NoneType>(Expression.Goto(ReturnLabel));
 		}
 	}
 
@@ -100,42 +115,6 @@ namespace LittleSharp
 
 			return Expression.Lambda(functionBlock, functionParameters);
 		}
-
-	}
-
-
-
-	public class BaseFunction<T> : Lambda
-	{
-		public readonly SmartExpression<NoneType> ReturnExpression;
-		public readonly Variable<T> ReturnVariable = new Variable<T>("Return");
-
-		public BaseFunction(string? functionName = null) : base(functionName)
-		{
-			ReturnExpression = new SmartExpression<NoneType>(Expression.Goto(ReturnLabel));
-		}
-	}
-
-	public class CompiledFunction<TOut>
-	{
-	}
-
-	public class CompiledFunction<TIn, TOut>
-	{
-		BaseFunction<TOut> baseFunction;
-		public CompiledFunction(out Variable<TIn> input, out Variable output) : base()
-		{
-			baseFunction = new BaseFunction<TOut>();
-			input = baseFunction.DeclareParameter<TIn>("input");
-			output = baseFunction.ReturnVariable;
-		}
-		public Scope Scope => baseFunction;
-		public Scope S => Scope;
-
-	}
-
-	public class CompiledAction<TIn>
-	{
 
 	}
 }

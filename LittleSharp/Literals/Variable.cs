@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using LittleSharp.Variables;
 
 namespace LittleSharp
 {
@@ -20,41 +21,7 @@ namespace LittleSharp
 		public abstract Expression GetExpression();
 	}
 
-	public class ArrayAccess
-	{
 
-		public readonly IndexExpression Expression;
-		public ArrayAccess(IndexExpression expression)
-		{
-			Expression = expression;
-		}
-
-		public ArrayAccess<T> SetType<T>()
-		{
-			return new ArrayAccess<T>(Expression);
-		}
-
-		public Expression GetExpression()
-		{
-			return Expression;
-		}
-
-	}
-	public class ArrayAccess<T> : ArrayAccess, IAssingableExpression<T>
-	{
-		public readonly Type Type;
-		public readonly SmartExpression<T> SmartExpression;
-		public SmartExpression<T> V { get => SmartExpression; }
-		public ArrayAccess(IndexExpression expression) : base(expression)
-		{
-			Type = typeof(T);
-			SmartExpression = new SmartExpression<T>(Expression);
-		}
-		public void Assing(Scope scope, SmartExpression<T> value)
-		{
-			scope.Assign(this, value);
-		}
-	}
 	public class Variable<T> : Variable, IAssingableExpression<T>
 	{
 		public readonly Type Type;

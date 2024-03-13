@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using LittleSharp.Scopes.Callables;
 
 namespace LittleSharp.Benchmarks
 {
@@ -51,7 +52,7 @@ namespace LittleSharp.Benchmarks
 			ulong ansver = 0;
 			for (int j = 0; j < division.Length; j++)
 			{
-				BaseFunction<ulong> function = new BaseFunction<ulong>();
+				Lambda<ulong> function = new Lambda<ulong>();
 				function
 					.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
 					.DeclareVariable<ulong>("localAnsver", out Variable<ulong> localAnsver)
@@ -67,7 +68,7 @@ namespace LittleSharp.Benchmarks
 							.Assign(i, i.V + 1)
 						)
 					);
-				function.Assign(function.ReturnVariable, localAnsver.V);
+				function.Assign(function.Output, localAnsver.V);
 
 				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new ParameterValuePairs()).Expression);
 				var fun = del.Compile();
@@ -80,7 +81,7 @@ namespace LittleSharp.Benchmarks
 		public ulong DivisionWithSmartExpressionB()
 		{
 			ulong ansver = 0;
-			BaseFunction<ulong> function = new BaseFunction<ulong>();
+			Lambda<ulong> function = new Lambda<ulong>();
 			function
 				.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
 				.DeclareParameter<ulong>("divisor", out Variable<ulong> divisor)
@@ -97,7 +98,7 @@ namespace LittleSharp.Benchmarks
 						.Assign(i, i.V + 1)
 					)
 				);
-			function.Assign(function.ReturnVariable, localAnsver.V);
+			function.Assign(function.Output, localAnsver.V);
 			for (int j = 0; j < division.Length; j++)
 			{
 

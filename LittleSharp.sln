@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LittleSharp", "LittleSharp\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LittleSharpTests", "LittleSharpTests\LittleSharpTests.csproj", "{D6ABBCE3-F74B-4552-99F9-8511E9B54671}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LittleSharpGenerator", "LittleSharpGenerator\LittleSharpGenerator.csproj", "{5C9B0F13-C565-4106-A591-E83ABA82C41B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D6ABBCE3-F74B-4552-99F9-8511E9B54671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6ABBCE3-F74B-4552-99F9-8511E9B54671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6ABBCE3-F74B-4552-99F9-8511E9B54671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C9B0F13-C565-4106-A591-E83ABA82C41B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C9B0F13-C565-4106-A591-E83ABA82C41B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C9B0F13-C565-4106-A591-E83ABA82C41B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C9B0F13-C565-4106-A591-E83ABA82C41B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
