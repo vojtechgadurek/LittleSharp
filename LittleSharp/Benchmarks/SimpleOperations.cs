@@ -51,25 +51,25 @@ namespace LittleSharp.Benchmarks
 			ulong ansver = 0;
 			for (int j = 0; j < division.Length; j++)
 			{
-				Function<ulong> function = new Function<ulong>();
+				BaseFunction<ulong> function = new BaseFunction<ulong>();
 				function
 					.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
 					.DeclareVariable<ulong>("localAnsver", out Variable<ulong> localAnsver)
 					.SubScope(
 						new Scope()
 						.DeclareVariable("i", out Variable<int> i)
-						.Assing(i, 0)
-						.Assing(localAnsver, 0)
+						.Assign(i, 0)
+						.Assign(localAnsver, 0)
 						.While(
 							i.V < ulongs.Length,
 							new Scope()
-							.Assing(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / division[j])
-							.Assing(i, i.V + 1)
+							.Assign(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / division[j])
+							.Assign(i, i.V + 1)
 						)
 					);
-				function.Assing(function.ReturnVariable, localAnsver.V);
+				function.Assign(function.ReturnVariable, localAnsver.V);
 
-				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new FunctionParametersAssigment()).Expression);
+				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new ParameterValuePairs()).Expression);
 				var fun = del.Compile();
 				ansver += fun(ulongs);
 			}
@@ -80,7 +80,7 @@ namespace LittleSharp.Benchmarks
 		public ulong DivisionWithSmartExpressionB()
 		{
 			ulong ansver = 0;
-			Function<ulong> function = new Function<ulong>();
+			BaseFunction<ulong> function = new BaseFunction<ulong>();
 			function
 				.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
 				.DeclareParameter<ulong>("divisor", out Variable<ulong> divisor)
@@ -88,21 +88,21 @@ namespace LittleSharp.Benchmarks
 				.SubScope(
 					new Scope()
 					.DeclareVariable("i", out Variable<int> i)
-					.Assing(i, 0)
-					.Assing(localAnsver, 0)
+					.Assign(i, 0)
+					.Assign(localAnsver, 0)
 					.While(
 						i.V < ulongs.Length,
 						new Scope()
-						.Assing(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / divisor.V)
-						.Assing(i, i.V + 1)
+						.Assign(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / divisor.V)
+						.Assign(i, i.V + 1)
 					)
 				);
-			function.Assing(function.ReturnVariable, localAnsver.V);
+			function.Assign(function.ReturnVariable, localAnsver.V);
 			for (int j = 0; j < division.Length; j++)
 			{
 
 
-				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new FunctionParametersAssigment().SetParameterToValue(divisor, 1)).Expression);
+				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new ParameterValuePairs().SetParameterToValue(divisor, 1)).Expression);
 				var fun = del.Compile();
 				ansver += fun(ulongs);
 			}

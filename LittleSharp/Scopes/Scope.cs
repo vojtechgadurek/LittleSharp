@@ -28,6 +28,12 @@ namespace LittleSharp
 			return variable;
 		}
 
+		public Scope Macro<T>(out T expression, T value)
+		{
+			expression = value;
+			return this;
+		}
+
 		public Scope DeclareVariable<TType>(string name, out Variable<TType> variable)
 		{
 			variable = DeclareVariable<TType>(name);
@@ -40,7 +46,7 @@ namespace LittleSharp
 			return this;
 		}
 
-		public Scope Assing<T>(IAssingableExpression<T> variable, SmartExpression<T> value)
+		public Scope Assign<T>(IAssingableExpression<T> variable, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(variable.GetExpression(), value.Expression));
 			return this;
@@ -49,6 +55,25 @@ namespace LittleSharp
 		public Scope ArrayAssing<T>(Variable<T> variable, SmartExpression<int> index, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(Expression.ArrayAccess(variable.Expression, index.Expression), value.Expression));
+			return this;
+		}
+
+		public Scope Invoke<TValue>(SmartExpression<NoneType> function, params SmartExpression[] arguments)
+		{
+			Invoke<TValue>(function, out var ansver, arguments);
+			_expressions.Add(ansver.Expression);
+			return this;
+		}
+
+		public Scope Invoke<TValueIn, TValueOut>(Expression<Func<TValueIn, TValueOut>> function, SmartExpression<TValueIn> argument, out SmartExpression<TValueOut> returnValue)
+		{
+			returnValue = new SmartExpression<TValueOut>(Expression.Invoke(function, argument.Expression));
+			return this;
+		}
+
+		public Scope Invoke<TValue>(SmartExpression<NoneType> function, out SmartExpression<TValue> returnValue, params SmartExpression[] arguments)
+		{
+			returnValue = new SmartExpression<TValue>(Expression.Invoke(function.Expression, arguments.Select(a => a.Expression)));
 			return this;
 		}
 
@@ -91,7 +116,7 @@ namespace LittleSharp
 		public Scope For<TValue>(Variable<TValue> variable, SmartExpression<bool> condition, Scope actionToDo, SmartExpression<TValue> increment)
 		{
 			actionToDo.AddVariable(variable);
-			actionToDo.Assing(variable, increment);
+			actionToDo.Assign(variable, increment);
 			While(condition, actionToDo);
 			return this;
 		}

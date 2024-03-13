@@ -20,29 +20,39 @@ namespace LittleSharp
 		public abstract Expression GetExpression();
 	}
 
-	public abstract class ArrayAccess
+	public class ArrayAccess
 	{
-		public abstract Expression GetExpression();
+
+		public readonly IndexExpression Expression;
+		public ArrayAccess(IndexExpression expression)
+		{
+			Expression = expression;
+		}
+
+		public ArrayAccess<T> SetType<T>()
+		{
+			return new ArrayAccess<T>(Expression);
+		}
+
+		public Expression GetExpression()
+		{
+			return Expression;
+		}
+
 	}
 	public class ArrayAccess<T> : ArrayAccess, IAssingableExpression<T>
 	{
 		public readonly Type Type;
-		public readonly IndexExpression Expression;
 		public readonly SmartExpression<T> SmartExpression;
 		public SmartExpression<T> V { get => SmartExpression; }
-		public ArrayAccess(IndexExpression expression)
+		public ArrayAccess(IndexExpression expression) : base(expression)
 		{
-			Expression = expression;
 			Type = typeof(T);
 			SmartExpression = new SmartExpression<T>(Expression);
 		}
 		public void Assing(Scope scope, SmartExpression<T> value)
 		{
-			scope.Assing(this, value);
-		}
-		public override Expression GetExpression()
-		{
-			return Expression;
+			scope.Assign(this, value);
 		}
 	}
 	public class Variable<T> : Variable, IAssingableExpression<T>
@@ -63,7 +73,7 @@ namespace LittleSharp
 
 		public void Assing(Scope scope, SmartExpression<T> value)
 		{
-			scope.Assing(this, value);
+			scope.Assign(this, value);
 		}
 
 		public override Expression GetExpression()

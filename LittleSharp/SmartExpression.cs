@@ -26,6 +26,12 @@ namespace LittleSharp
 
 		}
 
+		// array access overload
+		public ArrayAccess this[SmartExpression<int> i]
+		{
+			get { return new ArrayAccess(Expression.ArrayAccess(this.Expression, i.Expression)); }
+		}
+
 		public ArrayAccess<TItem> ArrayAccess<TItem>(SmartExpression<int> index)
 		{
 			return new ArrayAccess<TItem>(Expression.ArrayAccess(Expression, index.Expression));
