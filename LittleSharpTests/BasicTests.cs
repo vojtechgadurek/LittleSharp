@@ -1,4 +1,5 @@
 using LittleSharp;
+using LittleSharp.Callables;
 using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
@@ -10,13 +11,11 @@ namespace LittleSharpTests
 		[Fact]
 		public void TestPlus()
 		{
-			var func = new BaseFunction<int>();
-			var a = func.DeclareParameter<int>("a");
-			var b = func.DeclareParameter<int>("b");
+			var func = CompiledFunctions.Create<int, int, int>(out var a, out var b);
 
-			func.Assign(func.ReturnVariable, a.V + b.V);
+			func.Output.Assing(func.S, a.V + b.V);
 
-			var del = ((Expression<Func<int, int, int>>)func.Get(new ParameterValuePairs()).Expression);
+			var del = func.Construct();
 			var fun = del.Compile();
 			Assert.Equal(3, fun(1, 2));
 		}
@@ -27,18 +26,16 @@ namespace LittleSharpTests
 		public void TestIf(bool inputBool)
 		{
 
-			var func = new BaseFunction<int>();
-			func
-				.DeclareParameter<bool>("input", out var input)
+			var func = CompiledFunctions.Create<bool, int>(out var input);
+			func.S
 				.IfThen(
 				input.V,
 				new Scope()
-					.Assign(func.ReturnVariable, 1)
-					.AddExpression(func.ReturnExpression)
+					.Assign(func.Output, 1)
 					)
-				.Assign(func.ReturnVariable, 0);
+				.Assign(func.Output, 0);
 
-			var del = ((Expression<Func<bool, int>>)func.Get(new ParameterValuePairs()).Expression);
+			var del = func.Construct();
 			var fun = del.Compile();
 			Assert.Equal(inputBool ? 1 : 0, fun(inputBool));
 		}
@@ -52,52 +49,6 @@ namespace LittleSharpTests
 			var del = Expression.Lambda<Func<int>>(block).Compile();
 			Assert.Equal(1, del());
 
-		}
-
-		[Fact]
-		public void TestScope()
-		{
-			var func = new BaseFunction<int>("TestScope");
-			func.DeclareVariable<int>("a", out var a)
-				.Assign(a, 1);
-			;
-
-			func.Assign(func.ReturnVariable, a.V);
-
-			var x = func.ToSmartExpression();
-
-
-			var del = (func.Get().Expression);
-
-			Assert.Equal(1, ((Expression<Func<int>>)del).Compile()());
-
-
-		}
-
-		[Fact]
-		public void TestSetParameters()
-		{
-			var func = new BaseFunction<int>("TestScope");
-			func
-				.DeclareParameter<int>("a", out var a)
-				.Assign(func.ReturnVariable, a.V);
-
-			var del = (func.Get(new ParameterValuePairs().SetParameterToValue(a, 1)).Expression);
-			var fun = ((Expression<Func<int>>)del).Compile();
-			Assert.Equal(1, fun());
-
-
-			var f = new BaseFunction<int>("TestScope");
-			f.DeclareParameter("i", out Variable<int> i)
-			.Assign(f.ReturnVariable, i.V + 1)
-			.While(
-				i.V < 2,
-				new Scope()
-					.Assign(i, i.V + 1 << 10)
-					.AddExpression(f.ReturnExpression)
-					);
-
-			;
 		}
 	}
 

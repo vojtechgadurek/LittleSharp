@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,7 +79,11 @@ namespace LittleSharp
 			returnValue = new SmartExpression<TValue>(Expression.Invoke(function.Expression, arguments.Select(a => a.Expression)));
 			return this;
 		}
-
+		public Scope This(out Scope thisScope)
+		{
+			thisScope = this;
+			return this;
+		}
 		public Scope IfThen(SmartExpression<bool> condition, Scope actionToDo)
 		{
 			_expressions.Add(
