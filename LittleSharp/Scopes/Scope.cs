@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using LittleSharp.Variables;
+using LittleSharp.Literals;
 
 namespace LittleSharp
 {
@@ -15,6 +15,7 @@ namespace LittleSharp
 	{
 		Dictionary<string, ParameterExpression> _variables = new Dictionary<string, ParameterExpression>();
 		protected List<Expression> _expressions = new List<Expression>();
+		public readonly LabelTarget EndLabel = Expression.Label("End");
 		string? name;
 		public Scope(string? name = null)
 		{
@@ -22,7 +23,7 @@ namespace LittleSharp
 		}
 		public SmartExpression<NoneType> ToSmartExpression()
 		{
-			return new SmartExpression<NoneType>(Expression.Block(_variables.Values, _expressions));
+			return new SmartExpression<NoneType>(Expression.Block(_variables.Values, _expressions.Append(Expression.Label(EndLabel))));
 		}
 		public Variable<TType> DeclareVariable<TType>(string name)
 		{
@@ -148,6 +149,12 @@ namespace LittleSharp
 		public static implicit operator SmartExpression(Scope scope)
 		{
 			return scope.ToSmartExpression();
+		}
+
+		public Scope GoToEnd(Scope scope)
+		{
+			_expressions.Add(Expression.Goto(scope.EndLabel));
+			return this;
 		}
 	}
 }

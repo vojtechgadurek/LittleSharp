@@ -30,64 +30,68 @@ namespace LittleSharp.Callables
 	}
 	public abstract class CompiledFunctionBase<TOut>
 	{
-		internal Lambda<TOut> _baseFunction;
-		public Variable<TOut> Output => _baseFunction.Output;
+		internal Lambda<TOut> _lambda;
+		public Variable<TOut> Output => _lambda.Output;
 		public CompiledFunctionBase() : base()
 		{
-			_baseFunction = new Lambda<TOut>();
+			_lambda = new Lambda<TOut>();
 		}
-		public Scope Scope => _baseFunction;
+		public Scope Scope => _lambda;
 		public Scope S => Scope;
 
 	}
 	public class CompiledFunction<TOut> : CompiledFunctionBase<TOut>
 	{
+		Type _type = typeof(Func<TOut>);
 		public CompiledFunction() : base()
 		{
 		}
 
 		public Expression<Func<TOut>> Construct()
 		{
-			return (Expression<Func<TOut>>)_baseFunction.Construct(new ParameterValuePairs());
+			return (Expression<Func<TOut>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 
 
 	}
 	public class CompiledFunction<TInFirst, TOut> : CompiledFunctionBase<TOut>
 	{
+		Type _type = typeof(Func<TInFirst, TOut>);
 		public CompiledFunction(out Variable<TInFirst> input) : base()
 		{
-			input = _baseFunction.DeclareParameter<TInFirst>("input");
+			input = _lambda.DeclareParameter<TInFirst>("input");
 		}
 		public Expression<Func<TInFirst, TOut>> Construct()
 		{
-			return (Expression<Func<TInFirst, TOut>>)_baseFunction.Construct(new ParameterValuePairs());
+			return (Expression<Func<TInFirst, TOut>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 	public class CompiledFunction<TInFirst, TInSecond, TOut> : CompiledFunctionBase<TOut>
 	{
+		Type _type = typeof(Func<TInFirst, TInSecond, TOut>);
 		public CompiledFunction(out Variable<TInFirst> first, out Variable<TInSecond> second) : base()
 		{
-			first = _baseFunction.DeclareParameter<TInFirst>("first");
-			second = _baseFunction.DeclareParameter<TInSecond>("second");
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
 		}
 		public Expression<Func<TInFirst, TInSecond, TOut>> Construct()
 		{
-			return (Expression<Func<TInFirst, TInSecond, TOut>>)_baseFunction.Construct(new ParameterValuePairs());
+			return (Expression<Func<TInFirst, TInSecond, TOut>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 
 	public class CompiledFunction<TInFirst, TInSecond, TInThird, TOut> : CompiledFunctionBase<TOut>
 	{
+		Type _type = typeof(Func<TInFirst, TInSecond, TInThird, TOut>);
 		public CompiledFunction(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third) : base()
 		{
-			first = _baseFunction.DeclareParameter<TInFirst>("first");
-			second = _baseFunction.DeclareParameter<TInSecond>("second");
-			third = _baseFunction.DeclareParameter<TInThird>("third");
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
+			third = _lambda.DeclareParameter<TInThird>("third");
 		}
 		public Expression<Func<TInFirst, TInSecond, TInThird, TOut>> Construct()
 		{
-			return (Expression<Func<TInFirst, TInSecond, TInThird, TOut>>)_baseFunction.Construct(new ParameterValuePairs());
+			return (Expression<Func<TInFirst, TInSecond, TInThird, TOut>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 

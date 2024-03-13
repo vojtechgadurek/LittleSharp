@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using LittleSharp.Scopes.Callables;
+using LittleSharp.Callables;
 
 namespace LittleSharp.Benchmarks
 {
@@ -55,60 +55,26 @@ namespace LittleSharp.Benchmarks
 				Lambda<ulong> function = new Lambda<ulong>();
 				function
 					.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
-					.DeclareVariable<ulong>("localAnsver", out Variable<ulong> localAnsver)
+					.DeclareVariable<ulong>("localAnswer", out Variable<ulong> localAnswer)
 					.SubScope(
 						new Scope()
 						.DeclareVariable("i", out Variable<int> i)
 						.Assign(i, 0)
-						.Assign(localAnsver, 0)
+						.Assign(localAnswer, 0)
 						.While(
 							i.V < ulongs.Length,
 							new Scope()
-							.Assign(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / division[j])
+							.Assign(localAnswer, localAnswer.V + input.V.ArrayAccess<ulong>(i.V).V / division[j])
 							.Assign(i, i.V + 1)
 						)
 					);
-				function.Assign(function.Output, localAnsver.V);
+				function.Assign(function.Output, localAnswer.V);
 
-				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new ParameterValuePairs()).Expression);
+				var del = ((Expression<Func<ulong[], ulong>>)function.Construct(typeof(Expression<Func<ulong[], ulong>>)));
 				var fun = del.Compile();
 				ansver += fun(ulongs);
 			}
 			return ansver;
 		}
-
-		[Benchmark]
-		public ulong DivisionWithSmartExpressionB()
-		{
-			ulong ansver = 0;
-			Lambda<ulong> function = new Lambda<ulong>();
-			function
-				.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
-				.DeclareParameter<ulong>("divisor", out Variable<ulong> divisor)
-				.DeclareVariable<ulong>("localAnsver", out Variable<ulong> localAnsver)
-				.SubScope(
-					new Scope()
-					.DeclareVariable("i", out Variable<int> i)
-					.Assign(i, 0)
-					.Assign(localAnsver, 0)
-					.While(
-						i.V < ulongs.Length,
-						new Scope()
-						.Assign(localAnsver, localAnsver.V + input.V.ArrayAccess<ulong>(i.V).V / divisor.V)
-						.Assign(i, i.V + 1)
-					)
-				);
-			function.Assign(function.Output, localAnsver.V);
-			for (int j = 0; j < division.Length; j++)
-			{
-
-
-				var del = ((Expression<Func<ulong[], ulong>>)function.Get(new ParameterValuePairs().SetParameterToValue(divisor, 1)).Expression);
-				var fun = del.Compile();
-				ansver += fun(ulongs);
-			}
-			return ansver;
-		}
-
 	}
 }

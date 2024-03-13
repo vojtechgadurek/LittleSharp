@@ -5,9 +5,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using LittleSharp.Literals;
 
 
-namespace LittleSharp.Variables
+namespace LittleSharp.Literals
 {
 	public abstract class SmartExpression
 	{

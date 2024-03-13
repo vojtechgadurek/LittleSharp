@@ -6,13 +6,13 @@ using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using LittleSharp.Variables;
+using LittleSharp.Literals;
 
 namespace LittleSharp
 {
 	public interface IAssingableExpression<T>
 	{
-		void Assing(Scope scope, SmartExpression<T> expression);
+		void Assign(Scope scope, SmartExpression<T> expression);
 		SmartExpression<T> V { get; }
 		Expression GetExpression();
 	}
@@ -38,7 +38,7 @@ namespace LittleSharp
 			SmartExpression = new SmartExpression<T>(Expression);
 		}
 
-		public void Assing(Scope scope, SmartExpression<T> value)
+		public void Assign(Scope scope, SmartExpression<T> value)
 		{
 			scope.Assign(this, value);
 		}

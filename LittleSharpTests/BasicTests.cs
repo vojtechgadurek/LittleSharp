@@ -13,7 +13,7 @@ namespace LittleSharpTests
 		{
 			var func = CompiledFunctions.Create<int, int, int>(out var a, out var b);
 
-			func.Output.Assing(func.S, a.V + b.V);
+			func.Output.Assign(func.S, a.V + b.V);
 
 			var del = func.Construct();
 			var fun = del.Compile();
@@ -32,6 +32,7 @@ namespace LittleSharpTests
 				input.V,
 				new Scope()
 					.Assign(func.Output, 1)
+					.GoToEnd(func.S)
 					)
 				.Assign(func.Output, 0);
 

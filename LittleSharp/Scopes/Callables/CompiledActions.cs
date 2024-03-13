@@ -28,57 +28,64 @@ namespace LittleSharp.Callables
 	}
 	public abstract class CompiledActionBase
 	{
-		internal Lambda _baseActiontion;
+		internal Lambda _lambda;
 		public CompiledActionBase() : base()
 		{
-			_baseActiontion = new Lambda();
+			_lambda = new Lambda();
 		}
-		public Scope Scope => _baseActiontion;
+		public Scope Scope => _lambda;
 		public Scope S => Scope;
 
 	}
 	public class CompiledAction : CompiledActionBase
 	{
-
+		Type _type = typeof(Action);
 		public CompiledAction() : base()
 		{
+		}
+		public Expression<Action> Construct()
+		{
+			return (Expression<Action>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 	public class CompiledAction<TInFirst> : CompiledActionBase
 	{
+		Type _type = typeof(Action<TInFirst>);
 		public CompiledAction(out Variable<TInFirst> input) : base()
 		{
-			input = _baseActiontion.DeclareParameter<TInFirst>("input");
+			input = _lambda.DeclareParameter<TInFirst>("input");
 		}
 		public Expression<Action<TInFirst>> Construct()
 		{
-			return (Expression<Action<TInFirst>>)_baseActiontion.Construct(new ParameterValuePairs());
+			return (Expression<Action<TInFirst>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 	public class CompiledAction<TInFirst, TInSecond> : CompiledActionBase
 	{
+		Type _type = typeof(Action<TInFirst, TInSecond>);
 		public CompiledAction(out Variable<TInFirst> first, out Variable<TInSecond> second) : base()
 		{
-			first = _baseActiontion.DeclareParameter<TInFirst>("first");
-			second = _baseActiontion.DeclareParameter<TInSecond>("second");
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
 		}
 		public Expression<Action<TInFirst, TInSecond>> Construct()
 		{
-			return (Expression<Action<TInFirst, TInSecond>>)_baseActiontion.Construct(new ParameterValuePairs());
+			return (Expression<Action<TInFirst, TInSecond>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 
 	public class CompiledAction<TInFirst, TInSecond, TInThird> : CompiledActionBase
 	{
+		Type _type = typeof(Action<TInFirst, TInSecond, TInThird>);
 		public CompiledAction(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third) : base()
 		{
-			first = _baseActiontion.DeclareParameter<TInFirst>("first");
-			second = _baseActiontion.DeclareParameter<TInSecond>("second");
-			third = _baseActiontion.DeclareParameter<TInThird>("third");
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
+			third = _lambda.DeclareParameter<TInThird>("third");
 		}
 		public Expression<Action<TInFirst, TInSecond, TInThird>> Construct()
 		{
-			return (Expression<Action<TInFirst, TInSecond, TInThird>>)_baseActiontion.Construct(new ParameterValuePairs());
+			return (Expression<Action<TInFirst, TInSecond, TInThird>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 }

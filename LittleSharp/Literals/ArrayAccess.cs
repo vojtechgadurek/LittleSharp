@@ -1,4 +1,4 @@
-﻿using LittleSharp.Variables;
+﻿using LittleSharp.Literals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +38,7 @@ namespace LittleSharp.Literals
 			Type = typeof(T);
 			SmartExpression = new SmartExpression<T>(Expression);
 		}
-		public void Assing(Scope scope, SmartExpression<T> value)
+		public void Assign(Scope scope, SmartExpression<T> value)
 		{
 			scope.Assign(this, value);
 		}

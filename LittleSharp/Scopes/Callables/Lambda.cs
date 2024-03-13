@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using LittleSharp.Variables;
+using LittleSharp.Literals;
 
 namespace LittleSharp.Callables
 {
@@ -21,20 +21,18 @@ namespace LittleSharp.Callables
 
 	public class Lambda<T> : Lambda
 	{
-		public readonly SmartExpression<NoneType> OutputExpression;
-		public readonly Variable<T> Output = new Variable<T>("Return");
+		public readonly Variable<T> Output = new Variable<T>("Ouput");
 
 		public Lambda(string? functionName = null) : base(functionName)
 		{
-			OutputExpression = new SmartExpression<NoneType>(Expression.Goto(ReturnLabel));
+			ReturnValue = Output.Expression;
 		}
 	}
 
 	public class Lambda : Scope
 	{
 		List<Variable> _parameters = new List<Variable>();
-		public readonly LabelTarget ReturnLabel = Expression.Label("return");
-		public bool IsAction() => ReturnValue is not null;
+		public bool IsAction() => ReturnValue is null;
 		public ParameterExpression? ReturnValue;
 
 		public Lambda(string? name = null) : base(name)
@@ -74,15 +72,20 @@ namespace LittleSharp.Callables
 		{
 			if (IsAction())
 			{
-				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression, Expression.Label(ReturnLabel));
+				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression);
 			}
 			else
 			{
-				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression, Expression.Label(ReturnLabel), ReturnValue!);
+				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression, ReturnValue!);
 			}
 		}
 
-		public Expression Construct(ParameterValuePairs parameterValuePairs)
+		public Expression Construct(Type type)
+		{
+			return Construct(type, new ParameterValuePairs());
+		}
+
+		public Expression Construct(Type type, ParameterValuePairs parameterValuePairs)
 		{
 			// How it works?
 			// lambda[not assigned parameters]{
@@ -113,7 +116,7 @@ namespace LittleSharp.Callables
 				.Select(x => x.GetExpression())
 				.Cast<ParameterExpression>();
 
-			return Expression.Lambda(functionBlock, functionParameters);
+			return Expression.Lambda(type, functionBlock, functionParameters);
 		}
 
 	}
