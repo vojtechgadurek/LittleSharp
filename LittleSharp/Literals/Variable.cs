@@ -10,19 +10,13 @@ using LittleSharp.Literals;
 
 namespace LittleSharp
 {
-	public interface IAssingableExpression<T>
-	{
-		void Assign(Scope scope, SmartExpression<T> expression);
-		SmartExpression<T> V { get; }
-		Expression GetExpression();
-	}
 	public abstract class Variable
 	{
 		public abstract Expression GetExpression();
 	}
 
 
-	public class Variable<T> : Variable, IAssingableExpression<T>
+	public class Variable<T> : Variable, ILiteral<T>
 	{
 		public readonly Type Type;
 		public readonly ParameterExpression Expression;

@@ -49,7 +49,6 @@ namespace LittleSharpTests
 			var block = Expression.Block(new[] { x }, a, x);
 			var del = Expression.Lambda<Func<int>>(block).Compile();
 			Assert.Equal(1, del());
-
 		}
 	}
 

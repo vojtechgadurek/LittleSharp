@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using LittleSharp.Literals;
@@ -20,7 +22,7 @@ namespace LittleSharp.Literals
 	}
 
 
-	public class SmartExpression<T> : SmartExpression
+	public class SmartExpression<TValue> : SmartExpression
 	{
 		static int counter = 0;
 		public SmartExpression(Expression expression) : base(expression)
@@ -28,125 +30,120 @@ namespace LittleSharp.Literals
 
 		}
 
-		// array access overload
-		public ArrayAccess this[SmartExpression<int> i]
+		public Table<TValue, TValueHeld> T<TValueHeld>()
 		{
-			get { return new ArrayAccess(Expression.ArrayAccess(Expression, i.Expression)); }
+			return new Table<TValue, TValueHeld>(this);
 		}
 
-		public ArrayAccess<TItem> ArrayAccess<TItem>(SmartExpression<int> index)
-		{
-			return new ArrayAccess<TItem>(Expression.ArrayAccess(Expression, index.Expression));
-		}
-
+		// array access overload	
 		public SmartExpression<TNewType> Convert<TNewType>()
 		{
 			return new SmartExpression<TNewType>(Expression.Convert(Expression, typeof(TNewType)));
 		}
 
-		public static implicit operator SmartExpression<T>(T value)
+		public static implicit operator SmartExpression<TValue>(TValue value)
 		{
-			return new SmartExpression<T>(Expression.Constant(value));
+			return new SmartExpression<TValue>(Expression.Constant(value));
 		}
 
-		public SmartExpression<T> Call(MethodInfo method, params SmartExpression[] parameters)
+		public SmartExpression<TValue> Call(MethodInfo method, params SmartExpression[] parameters)
 		{
-			return new SmartExpression<T>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
+			return new SmartExpression<TValue>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
 		}
 
-		public SmartExpression<T> Field(FieldInfo field)
+		public SmartExpression<TValue> Field(FieldInfo field)
 		{
-			return new SmartExpression<T>(Expression.Field(Expression, field));
+			return new SmartExpression<TValue>(Expression.Field(Expression, field));
 		}
 
 		#region Operators
-		public static SmartExpression<T> operator +(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator +(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Add(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Add(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator -(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator -(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Subtract(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Subtract(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator *(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator *(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Multiply(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Multiply(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator /(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator /(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Divide(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Divide(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator %(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator %(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Modulo(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Modulo(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator &(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator &(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.And(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.And(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator |(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator |(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.Or(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.Or(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator ^(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<TValue> operator ^(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
-			return new SmartExpression<T>(Expression.ExclusiveOr(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.ExclusiveOr(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator <<(SmartExpression<T> a, SmartExpression<int> b)
+		public static SmartExpression<TValue> operator <<(SmartExpression<TValue> a, SmartExpression<int> b)
 		{
-			return new SmartExpression<T>(Expression.LeftShift(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.LeftShift(a.Expression, b.Expression));
 		}
-		public static SmartExpression<T> operator >>(SmartExpression<T> a, SmartExpression<int> b)
+		public static SmartExpression<TValue> operator >>(SmartExpression<TValue> a, SmartExpression<int> b)
 		{
-			return new SmartExpression<T>(Expression.RightShift(a.Expression, b.Expression));
+			return new SmartExpression<TValue>(Expression.RightShift(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator ==(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator ==(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.Equal(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator !=(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator !=(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.NotEqual(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator >(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator >(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.GreaterThan(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator <(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator <(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.LessThan(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator >=(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator >=(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.GreaterThanOrEqual(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator <=(SmartExpression<T> a, SmartExpression<T> b)
+		public static SmartExpression<bool> operator <=(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
 			return new SmartExpression<bool>(Expression.LessThanOrEqual(a.Expression, b.Expression));
 		}
-		public static SmartExpression<bool> operator !(SmartExpression<T> a)
+		public static SmartExpression<bool> operator !(SmartExpression<TValue> a)
 		{
 			return new SmartExpression<bool>(Expression.Not(a.Expression));
 		}
-		public static SmartExpression<T> operator ~(SmartExpression<T> a)
+		public static SmartExpression<TValue> operator ~(SmartExpression<TValue> a)
 		{
-			return new SmartExpression<T>(Expression.OnesComplement(a.Expression));
+			return new SmartExpression<TValue>(Expression.OnesComplement(a.Expression));
 		}
-		public static SmartExpression<T> operator +(SmartExpression<T> a)
+		public static SmartExpression<TValue> operator +(SmartExpression<TValue> a)
 		{
-			return new SmartExpression<T>(Expression.UnaryPlus(a.Expression));
+			return new SmartExpression<TValue>(Expression.UnaryPlus(a.Expression));
 		}
-		public static SmartExpression<T> operator -(SmartExpression<T> a)
+		public static SmartExpression<TValue> operator -(SmartExpression<TValue> a)
 		{
-			return new SmartExpression<T>(Expression.Negate(a.Expression));
+			return new SmartExpression<TValue>(Expression.Negate(a.Expression));
 		}
-		public static SmartExpression<T> operator ++(SmartExpression<T> a)
+		public static SmartExpression<TValue> operator ++(SmartExpression<TValue> a)
 		{
-			return new SmartExpression<T>(Expression.Increment(a.Expression));
+			return new SmartExpression<TValue>(Expression.Increment(a.Expression));
 		}
-		public static SmartExpression<T> operator --(SmartExpression<T> a)
+		public static SmartExpression<TValue> operator --(SmartExpression<TValue> a)
 		{
-			return new SmartExpression<T>(Expression.Decrement(a.Expression));
+			return new SmartExpression<TValue>(Expression.Decrement(a.Expression));
 		}
 		#endregion
 	}

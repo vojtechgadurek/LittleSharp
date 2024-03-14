@@ -28,7 +28,7 @@ namespace LittleSharp.Literals
 		}
 
 	}
-	public class ArrayAccess<T> : ArrayAccess, IAssingableExpression<T>
+	public class ArrayAccess<T> : ArrayAccess, ILiteral<T>
 	{
 		public readonly Type Type;
 		public readonly SmartExpression<T> SmartExpression;

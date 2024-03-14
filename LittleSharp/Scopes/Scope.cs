@@ -8,23 +8,37 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using LittleSharp.Literals;
+using LittleSharp.Callables;
 
 namespace LittleSharp
 {
 	public class Scope
 	{
-		Dictionary<string, ParameterExpression> _variables = new Dictionary<string, ParameterExpression>();
+		protected Dictionary<string, ParameterExpression> _variables = new Dictionary<string, ParameterExpression>();
 		protected List<Expression> _expressions = new List<Expression>();
 		public readonly LabelTarget EndLabel = Expression.Label("End");
-		string? name;
+		string? _name;
 		public Scope(string? name = null)
 		{
-			this.name = name;
+			this._name = name;
 		}
-		public SmartExpression<NoneType> ToSmartExpression()
+		public SmartExpression<NoneType> Construct()
 		{
-			return new SmartExpression<NoneType>(Expression.Block(_variables.Values, _expressions.Append(Expression.Label(EndLabel))));
+			return new SmartExpression<NoneType>(
+				Expression.Block(
+					_variables.Values,
+					_expressions.Append(Expression.Label(EndLabel))
+					)
+				);
+
+
 		}
+		public Scope Macro<T>(out T expression, T value)
+		{
+			expression = value;
+			return this;
+		}
+
 		public Variable<TType> DeclareVariable<TType>(string name)
 		{
 			var variable = new Variable<TType>(name);
@@ -32,15 +46,23 @@ namespace LittleSharp
 			return variable;
 		}
 
-		public Scope Macro<T>(out T expression, T value)
-		{
-			expression = value;
-			return this;
-		}
-
 		public Scope DeclareVariable<TType>(string name, out Variable<TType> variable)
 		{
 			variable = DeclareVariable<TType>(name);
+			return this;
+		}
+
+		public Scope DeclareVariable<TType>(out Variable<TType> variable)
+		{
+			variable = DeclareVariable<TType>(nameof(variable));
+			return this;
+		}
+
+		public Scope DeclareVariable<TType>(out Variable<TType> variable, SmartExpression<TType> value)
+		{
+			variable = DeclareVariable<TType>(nameof(variable));
+			_variables.Add(variable.Name, (ParameterExpression)variable.Expression);
+			_expressions.Add(Expression.Assign(variable.Expression, value.Expression));
 			return this;
 		}
 
@@ -50,7 +72,7 @@ namespace LittleSharp
 			return this;
 		}
 
-		public Scope Assign<T>(IAssingableExpression<T> variable, SmartExpression<T> value)
+		public Scope Assign<T>(ILiteral<T> variable, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(variable.GetExpression(), value.Expression));
 			return this;
@@ -80,6 +102,20 @@ namespace LittleSharp
 			returnValue = new SmartExpression<TValue>(Expression.Invoke(function.Expression, arguments.Select(a => a.Expression)));
 			return this;
 		}
+
+
+		public Scope Invoke<TValueIn, TValueOut>(CompiledFunction<TValueIn, TValueOut> function, SmartExpression<TValueIn> argument, out SmartExpression<TValueOut> returnValue)
+		{
+			Invoke(function.Construct(), argument, out returnValue);
+			return this;
+		}
+
+		public Scope Invoke<TValue>(Expression<Action<TValue>> function, SmartExpression<TValue> argument)
+		{
+			_expressions.Add(Expression.Invoke(function, argument.Expression));
+			return this;
+		}
+
 		public Scope This(out Scope thisScope)
 		{
 			thisScope = this;
@@ -90,7 +126,7 @@ namespace LittleSharp
 			_expressions.Add(
 				Expression.IfThen(
 					condition.Expression,
-					actionToDo.ToSmartExpression().Expression
+					actionToDo.Construct().Expression
 				)
 			);
 
@@ -102,8 +138,8 @@ namespace LittleSharp
 			_expressions.Add(
 				Expression.IfThenElse(
 					condition.Expression,
-					actionToDoConditionIsTrue.ToSmartExpression().Expression,
-					actionToDoIfConditionIsFalse.ToSmartExpression().Expression
+					actionToDoConditionIsTrue.Construct().Expression,
+					actionToDoIfConditionIsFalse.Construct().Expression
 					)
 				);
 			return this;
@@ -117,18 +153,9 @@ namespace LittleSharp
 
 		public Scope SubScope(Scope scope)
 		{
-			_expressions.Add(scope.ToSmartExpression().Expression);
+			_expressions.Add(scope.Construct().Expression);
 			return this;
 		}
-
-		public Scope For<TValue>(Variable<TValue> variable, SmartExpression<bool> condition, Scope actionToDo, SmartExpression<TValue> increment)
-		{
-			actionToDo.AddVariable(variable);
-			actionToDo.Assign(variable, increment);
-			While(condition, actionToDo);
-			return this;
-		}
-
 
 		public Scope While(SmartExpression<bool> condition, Scope actionToDo)
 		{
@@ -137,7 +164,7 @@ namespace LittleSharp
 			Expression expression = Expression.Loop(
 				Expression.IfThenElse(
 					condition.Expression,
-					actionToDo.ToSmartExpression().Expression,
+					actionToDo.Construct().Expression,
 					Expression.Break(breakLabel)
 					),
 				breakLabel
@@ -146,15 +173,30 @@ namespace LittleSharp
 			return this;
 		}
 
-		public static implicit operator SmartExpression(Scope scope)
-		{
-			return scope.ToSmartExpression();
-		}
-
 		public Scope GoToEnd(Scope scope)
 		{
 			_expressions.Add(Expression.Goto(scope.EndLabel));
 			return this;
+		}
+	}
+
+	public class Scope<TReturnValue> : Scope
+	{
+		public readonly Variable<TReturnValue> Output;
+		public Scope(string? name = null) : base(name)
+		{
+			Output = DeclareVariable<TReturnValue>("Output");
+		}
+		public new SmartExpression<TReturnValue> Construct()
+		{
+			return new SmartExpression<TReturnValue>(
+				Expression.Block(
+					_variables.Values,
+					_expressions.Append(
+						Expression.Label(EndLabel, Output.Expression)
+						)
+					)
+				);
 		}
 	}
 }

@@ -72,11 +72,11 @@ namespace LittleSharp.Callables
 		{
 			if (IsAction())
 			{
-				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression);
+				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.Construct().Expression);
 			}
 			else
 			{
-				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.ToSmartExpression().Expression, ReturnValue!);
+				return Expression.Block(assignedParameters, valuesToParametersAssignmets, base.Construct().Expression, ReturnValue!);
 			}
 		}
 
