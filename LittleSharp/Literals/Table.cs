@@ -25,10 +25,9 @@ namespace LittleSharp.Literals
 		{
 			get { return new ArrayAccess<TValue>(Expression.ArrayAccess(_table.Expression, i.Expression)); }
 		}
-
 		public ArrayAccess<TValue> this[SmartExpression<ulong> i]
 		{
-			get { return new ArrayAccess<TValue>(Expression.ArrayAccess(_table.Expression, i.Expression)); }
+			get { return new ArrayAccess<TValue>(Expression.ArrayAccess(_table.Expression, i.Convert<int>().Expression)); }
 		}
 
 		public Table<TOutputTable, TOutput> Select<TOutputTable, TOutput>(
@@ -43,12 +42,12 @@ namespace LittleSharp.Literals
 				.While(
 					i_.V < numberOfItems,
 					new Scope()
-						.Function(function, inputTable_.V.IsTable<TValue>()[i_.V].V, out var returnValue)
-						.Assign(outputTable_.V.IsTable<TOutput>()[i_.V], returnValue)
+						.Function(function, inputTable_.V.ToTable<TValue>()[i_.V].V, out var returnValue)
+						.Assign(outputTable_.V.ToTable<TOutput>()[i_.V], returnValue)
 						.Assign(i_, i_.V + 1)
 						)
 				.Assign(Scope.Output, outputTable_.V);
-			return Scope.Construct().IsTable<TOutput>();
+			return Scope.Construct().ToTable<TOutput>();
 		}
 		public SmartExpression<NoneType> ForEach(Expression<Action<TValue>> action, SmartExpression<int> numberOfItems)
 		{
@@ -60,7 +59,7 @@ namespace LittleSharp.Literals
 				.While(
 						i_.V < numberOfItems,
 						new Scope()
-							.Action(action, inputTable_.V.IsTable<TValue>()[i_.V].V)
+							.Action(action, inputTable_.V.ToTable<TValue>()[i_.V].V)
 							.Assign(i_, i_.V + 1)
 				);
 			return Scope.Construct();

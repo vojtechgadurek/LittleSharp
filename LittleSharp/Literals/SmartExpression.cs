@@ -30,12 +30,15 @@ namespace LittleSharp.Literals
 
 		}
 
-		public Table<TValue, TValueHeld> IsTable<TValueHeld>()
+		public Table<TValue, TValueHeld> ToTable<TValueHeld>()
 		{
 			return new Table<TValue, TValueHeld>(this);
 		}
 
-		// array access overload	
+		public Set<TValue, TValueHeld> ToSet<TValueHeld>()
+		{
+			return new Set<TValue, TValueHeld>(this);
+		}
 		public SmartExpression<TNewType> Convert<TNewType>()
 		{
 			return new SmartExpression<TNewType>(Expression.Convert(Expression, typeof(TNewType)));

@@ -15,7 +15,7 @@ namespace LittleSharp
 {
 	public class Scope
 	{
-		protected Dictionary<string, ParameterExpression> _variables = new Dictionary<string, ParameterExpression>();
+		protected List<ParameterExpression> _variables = new List<ParameterExpression>();
 		protected List<Expression> _expressions = new List<Expression>();
 		public readonly LabelTarget EndLabel = Expression.Label("End");
 		string? _name;
@@ -27,7 +27,7 @@ namespace LittleSharp
 		{
 			return new SmartExpression<NoneType>(
 				Expression.Block(
-					_variables.Values,
+					_variables,
 					_expressions.Append(Expression.Label(EndLabel))
 					)
 				);
@@ -43,7 +43,7 @@ namespace LittleSharp
 		public Variable<TType> DeclareVariable<TType>(string name)
 		{
 			var variable = new Variable<TType>(name);
-			_variables.Add(name, (ParameterExpression)variable.Expression);
+			_variables.Add((ParameterExpression)variable.Expression);
 			return variable;
 		}
 
@@ -62,14 +62,13 @@ namespace LittleSharp
 		public Scope DeclareVariable<TType>(out Variable<TType> variable, SmartExpression<TType> value)
 		{
 			variable = DeclareVariable<TType>(nameof(variable));
-			_variables.Add(variable.Name, (ParameterExpression)variable.Expression);
 			_expressions.Add(Expression.Assign(variable.Expression, value.Expression));
 			return this;
 		}
 
 		public Scope AddVariable<TType>(Variable<TType> variable)
 		{
-			_variables.Add(variable.Name, (ParameterExpression)variable.Expression);
+			_variables.Add((ParameterExpression)variable.Expression);
 			return this;
 		}
 
@@ -82,6 +81,12 @@ namespace LittleSharp
 		public Scope ArrayAssing<T>(Variable<T> variable, SmartExpression<int> index, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(Expression.ArrayAccess(variable.Expression, index.Expression), value.Expression));
+			return this;
+		}
+
+		public Scope Add<T>(IAdd<T> add, SmartExpression<T> value)
+		{
+			_expressions.Add(add.Add(value).Expression);
 			return this;
 		}
 
@@ -237,7 +242,7 @@ namespace LittleSharp
 		{
 			return new SmartExpression<TReturnValue>(
 				Expression.Block(
-					_variables.Values,
+					_variables,
 					_expressions.Append(
 						Expression.Label(EndLabel, Output.Expression)
 						)
