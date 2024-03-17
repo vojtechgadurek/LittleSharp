@@ -50,30 +50,6 @@ namespace LittleSharp.Benchmarks
 		public ulong DivisionWithSmartExpression()
 		{
 			ulong ansver = 0;
-			for (int j = 0; j < division.Length; j++)
-			{
-				Lambda<ulong> function = new Lambda<ulong>();
-				function
-					.DeclareParameter<ulong[]>("input", out Variable<ulong[]> input)
-					.DeclareVariable<ulong>("localAnswer", out Variable<ulong> localAnswer)
-					.SubScope(
-						new Scope()
-						.DeclareVariable("i", out Variable<int> i)
-						.Assign(i, 0)
-						.Assign(localAnswer, 0)
-						.While(
-							i.V < ulongs.Length,
-							new Scope()
-							.Assign(localAnswer, localAnswer.V + input.V.ArrayAccess<ulong>(i.V).V / division[j])
-							.Assign(i, i.V + 1)
-						)
-					);
-				function.Assign(function.Output, localAnswer.V);
-
-				var del = ((Expression<Func<ulong[], ulong>>)function.Construct(typeof(Expression<Func<ulong[], ulong>>)));
-				var fun = del.Compile();
-				ansver += fun(ulongs);
-			}
 			return ansver;
 		}
 	}

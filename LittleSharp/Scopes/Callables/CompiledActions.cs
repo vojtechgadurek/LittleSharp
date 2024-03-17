@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -25,6 +27,12 @@ namespace LittleSharp.Callables
 		{
 			return new CompiledAction<TInFirst, TInSecond, TInThird>(out first, out second, out third);
 		}
+
+		public static CompiledAction<TInFirst, TInSecond, TInThird, TInFourth> Create<TInFirst, TInSecond, TInThird, TInFourth>(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth)
+		{
+			return new CompiledAction<TInFirst, TInSecond, TInThird, TInFourth>(out first, out second, out third, out fourth);
+		}
+
 	}
 	public abstract class CompiledActionBase
 	{
@@ -86,6 +94,22 @@ namespace LittleSharp.Callables
 		public Expression<Action<TInFirst, TInSecond, TInThird>> Construct()
 		{
 			return (Expression<Action<TInFirst, TInSecond, TInThird>>)_lambda.Construct(_type, new ParameterValuePairs());
+		}
+	}
+
+	public class CompiledAction<TInFirst, TInSecond, TInThird, TInFourth> : CompiledActionBase
+	{
+		Type _type = typeof(Action<TInFirst, TInSecond, TInThird, TInFourth>);
+		public CompiledAction(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth) : base()
+		{
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
+			third = _lambda.DeclareParameter<TInThird>("third");
+			fourth = _lambda.DeclareParameter<TInFourth>("fourth");
+		}
+		public Expression<Action<TInFirst, TInSecond, TInThird, TInFourth>> Construct()
+		{
+			return (Expression<Action<TInFirst, TInSecond, TInThird, TInFourth>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
 }

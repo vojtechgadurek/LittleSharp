@@ -30,7 +30,7 @@ namespace LittleSharp.Literals
 
 		}
 
-		public Table<TValue, TValueHeld> T<TValueHeld>()
+		public Table<TValue, TValueHeld> IsTable<TValueHeld>()
 		{
 			return new Table<TValue, TValueHeld>(this);
 		}
@@ -144,6 +144,21 @@ namespace LittleSharp.Literals
 		public static SmartExpression<TValue> operator --(SmartExpression<TValue> a)
 		{
 			return new SmartExpression<TValue>(Expression.Decrement(a.Expression));
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
+
+			if (ReferenceEquals(obj, null))
+			{
+				return false;
+			}
+
+			throw new NotImplementedException();
 		}
 		#endregion
 	}

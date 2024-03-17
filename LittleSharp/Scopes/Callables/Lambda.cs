@@ -110,7 +110,7 @@ namespace LittleSharp.Callables
 			//Main block holding action done in the scope
 			var functionBlock = CreateMainScopeBlock(assignedParameters, setParametersBlock);
 
-			//Filter out the parameters that have been assigned a value
+			//Filter out the parameters that have been assigned a _value
 			var functionParameters = _parameters
 				.Where(x => !parametersWithAssignedValue.Any(y => x == y.Item1))
 				.Select(x => x.GetExpression())

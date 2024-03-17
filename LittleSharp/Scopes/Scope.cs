@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LittleSharp.Literals;
 using LittleSharp.Callables;
+using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 
 namespace LittleSharp
 {
@@ -84,38 +85,83 @@ namespace LittleSharp
 			return this;
 		}
 
-		public Scope Invoke<TValue>(SmartExpression<NoneType> function, params SmartExpression[] arguments)
+		#region Actions
+		public Scope UnTypedAction(Expression action, params SmartExpression[] arguments)
 		{
-			Invoke<TValue>(function, out var ansver, arguments);
-			_expressions.Add(ansver.Expression);
+			_expressions.Add(Expression.Invoke(action, arguments.Select(x => x.Expression)));
 			return this;
 		}
 
-		public Scope Invoke<TValueIn, TValueOut>(Expression<Func<TValueIn, TValueOut>> function, SmartExpression<TValueIn> argument, out SmartExpression<TValueOut> returnValue)
+		public Scope Action(Expression<Action> action)
 		{
-			returnValue = new SmartExpression<TValueOut>(Expression.Invoke(function, argument.Expression));
+			_expressions.Add(Expression.Invoke(action));
 			return this;
 		}
 
-		public Scope Invoke<TValue>(SmartExpression<NoneType> function, out SmartExpression<TValue> returnValue, params SmartExpression[] arguments)
+		public Scope Action<T1>(Expression<Action<T1>> action, SmartExpression<T1> smartExpression)
 		{
-			returnValue = new SmartExpression<TValue>(Expression.Invoke(function.Expression, arguments.Select(a => a.Expression)));
+			_expressions.Add(Expression.Invoke(action, smartExpression.Expression));
 			return this;
 		}
 
-
-		public Scope Invoke<TValueIn, TValueOut>(CompiledFunction<TValueIn, TValueOut> function, SmartExpression<TValueIn> argument, out SmartExpression<TValueOut> returnValue)
+		public Scope Action<T1, T2>(Expression<Action<T1, T2>> action, SmartExpression<T1> smartExpression1, SmartExpression<T2> smartExpression2)
 		{
-			Invoke(function.Construct(), argument, out returnValue);
+			_expressions.Add(Expression.Invoke(action, smartExpression1.Expression, smartExpression2.Expression));
 			return this;
 		}
 
-		public Scope Invoke<TValue>(Expression<Action<TValue>> function, SmartExpression<TValue> argument)
+		public Scope Action<T1, T2, T3>(Expression<Action<T1, T2, T3>> action, SmartExpression<T1> smartExpression1, SmartExpression<T2> smartExpression2, SmartExpression<T3> smartExpression3)
 		{
-			_expressions.Add(Expression.Invoke(function, argument.Expression));
+			_expressions.Add(Expression.Invoke(action, smartExpression1.Expression, smartExpression2.Expression, smartExpression3.Expression));
 			return this;
 		}
 
+		public Scope Action<T1, T2, T3, T4>(Expression<Action<T1, T2, T3, T4>> action, SmartExpression<T1> smartExpression1, SmartExpression<T2> smartExpression2, SmartExpression<T3> smartExpression3, SmartExpression<T4> smartExpression4)
+		{
+			_expressions.Add(Expression.Invoke(action, smartExpression1.Expression, smartExpression2.Expression, smartExpression3.Expression, smartExpression4.Expression));
+			return this;
+		}
+
+		#endregion
+
+		#region Functions
+
+		public Scope UnTypedFunction(Expression action, params SmartExpression[] arguments)
+		{
+			_expressions.Add(Expression.Invoke(action, arguments.Select(x => x.Expression)));
+			return this;
+		}
+
+		public Scope Function<TOut>(Expression<Func<TOut>> action, out SmartExpression<TOut> output)
+		{
+			output = new SmartExpression<TOut>(Expression.Invoke(action));
+			return this;
+		}
+
+		public Scope Function<T1, TOut>(Expression<Func<T1, TOut>> action, SmartExpression<T1> value1, out SmartExpression<TOut> output)
+		{
+			output = new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression));
+			return this;
+		}
+
+		public Scope Function<T1, T2, TOut>(Expression<Func<T1, T2, TOut>> action, SmartExpression<T1> value1, SmartExpression<T2> value2, out SmartExpression<TOut> output)
+		{
+			output = new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression));
+			return this;
+		}
+
+		public Scope Function<T1, T2, T3, TOut>(Expression<Func<T1, T2, T3, TOut>> action, SmartExpression<T1> value1, SmartExpression<T2> value2, SmartExpression<T3> value3, out SmartExpression<TOut> output)
+		{
+			output = new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression, value3.Expression));
+			return this;
+		}
+
+		public Scope Function<T1, T2, T3, T4, TOut>(Expression<Func<T1, T2, T3, T4, TOut>> action, SmartExpression<T1> value1, SmartExpression<T2> value2, SmartExpression<T3> value3, SmartExpression<T4> value4, out SmartExpression<TOut> output)
+		{
+			output = new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression, value3.Expression, value4.Expression));
+			return this;
+		}
+		#endregion
 		public Scope This(out Scope thisScope)
 		{
 			thisScope = this;
