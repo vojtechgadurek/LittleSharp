@@ -6,11 +6,14 @@ This library is mostly experimental and more a snaphot, what it can be
 
 ## Introduction
 
-Littlesharp brings the possibility to compile functions and actions for some paremeters during runtime and also type safety to them.
-This library was mainly developed as sidequest to my Bachealor's thesis, but I decided to make it public. Bacheolor thesis had problem with large amount
+Littlesharp brings the possibility to compile functions and actions for some 
+paremeters during runtime and also type safety to them.
+This library was mainly developed as sidequest to my Bachealor's thesis,
+but I decided to make it public. Bacheolor thesis had problem with large amount
 of hashing functions. The perfomance issue led mainly in two fact:
 
-- a % b is a slow operation, but when compiler knows it in addvance, it cam be opmtimized gaining circa 3 times faster execution
+- a % b is a slow operation, but when compiler knows it in addvance,
+it could be opmtimized gaining circa 3 times faster execution
 - Virtual calls are expensive for small functions, that are repeated many times and lies in hotpath
 
 Both of those charaterize most of hashing functions.
@@ -41,9 +44,52 @@ Example of usage:
 
 ```csharp
 
-var f = CompiledFunction.Create<int, int, int>(out var a, out var b)
+// Declare a function with two parameters a and b
+var f = CompiledFunction.Create<int, int, int>(out var a_, out var b_)
 
-f.S.DeclareVariable<int>(out var c, 5);
-
+// c = 5; 
+f.S.DeclareVariable<int>(out var c_, 5)
+// return a + b + c
+	.Assign(f.Output, a.V + b.V + c.V)
 ```
+
+### How it works 
+
+Variables are variable and parametares.
+Scopes are functions, actions, lambdas and scopes. They hold variables, 
+parameters and expressions to be executed. Scopes may be contained 
+in other scopes and they may also contain them.
+Variables may be used only from scope they are declared in or from any scope declared in same scope. 
+SmartExpression\<T> are just expression with type safety and added operators.
+
+Variables may hold value. This value may be accessed in field *V*, where *V* is abbreviation for *Value*. 
+
+It is important to understand, how expression works. Every scope hold list of expressions, 
+thus order of their execution on the order when they inserted to this list. Most of methods on Scope does
+not add any expression to the expression list. Only Assign does so and AddExpression does so. This may seem counterintuitive,
+but is important to remmeber, if function does not change state, there is no need to execute it (Most of the time :D).
+```csharp
+
+// Declares a new scope
+var scope = new Scope()
+
+// Creates new parameter
+scope.DeclareVariable<int>(a, 0)
+	// Return expression giving a + 5
+	// Marco does not add to expression list
+	// Thus a + 5 is not executed
+	.Marco(var out b, a + 5)
+	// Assigns a + 5 to a 
+	// thus now a = b = a + 5 = 0 + 5 = 5
+	.Assign(a, b)
+
+var value = scope.Construct()  // Returns SmartExpression<NoneType> that represents scope without return value
+// SmartExpression<NoneType> is just wrapper for Expression so it may hold some 
+value and for block statements it is the value of last expression
+// We may use this knowlede to force type, this may fail if the last expression is not int
+
+value.ForceType<int>() // Returns Int>
+```
+
+
 

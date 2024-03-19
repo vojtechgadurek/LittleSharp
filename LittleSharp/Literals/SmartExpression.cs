@@ -30,6 +30,10 @@ namespace LittleSharp.Literals
 
 		}
 
+		public SmartExpression<TNew> ForceType<TNew>(SmartExpression<TValue> value)
+		{
+			return new SmartExpression<TNew>(value.Expression);
+		}
 		public Table<TValue, TValueHeld> ToTable<TValueHeld>()
 		{
 			return new Table<TValue, TValueHeld>(this);
