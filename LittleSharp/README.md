@@ -45,12 +45,12 @@ Example of usage:
 ```csharp
 
 // Declare a function with two parameters a and b
-var f = CompiledFunction.Create<int, int, int>(out var a_, out var b_)
+var f = CompiledFunction.Create<int, int, int>(out var a_, out var b_);
 
 // c = 5; 
 f.S.DeclareVariable<int>(out var c_, 5)
 // return a + b + c
-	.Assign(f.Output, a.V + b.V + c.V)
+	.Assign(f.Output, a.V + b.V + c.V);
 ```
 
 ### How it works 
@@ -71,7 +71,7 @@ but is important to remmeber, if function does not change state, there is no nee
 ```csharp
 
 // Declares a new scope
-var scope = new Scope()
+var scope = new Scope();
 
 // Creates new parameter
 scope.DeclareVariable<int>(a, 0)
@@ -91,5 +91,32 @@ value and for block statements it is the value of last expression
 value.ForceType<int>() // Returns Int>
 ```
 
+Sometimes we want to have a scope return some value. Thus one should use *Scope<\T>*. 
+Every scope with return value holds a *Output* variable, which may be used as a return value. 
+Also sometimes, we may want to go the the end of the scope. May use *scope.GotoEnd( SCOPE_WHICH_END_TO_USE)*. Any scope may go end
+of any containg scope. This is equvalent to *return*, *continue*, *break* in C#.
+```csharp
+var scope = new Scope<int>();
+scope.DeclareVariable<int>(a, 0)
+	.Assign(a, 5)
+	.Assign(scope.Output, a)
+	.GotoEnd(scope);
+	//Any code afeter this will not be executed
+	.Assign(scope.Output, 10)
+	.Construct(); // Returns SmartExpression<int> holding expresison tree retunning 5.
+```
 
+Is is important to remember, that *construct* method does not execute the code. It just creates the expression tree,
+that needs to be compiled to be executed, we may use this to create macros.
+
+```csharp
+
+var scope = new Scope<int>();
+scope.DeclareVariable<int>(i_, 0)
+	.Marco(out var macro, new Scope().Assign(i_, i_ + 5))
+	.AddExpression(macro)
+	.AddExpression(macro)
+	.Assign(scope.Output, i_)
+	.Construct(); // Returns SmartExpression<int> holding expression tree returning 10
+```
 
