@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using LittleSharp.Literals;
 using LittleSharp.Callables;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
+using LittleSharp.Scopes;
 
 namespace LittleSharp
 {
@@ -65,7 +66,6 @@ namespace LittleSharp
 			_expressions.Add(Expression.Assign(variable.Expression, value.Expression));
 			return this;
 		}
-
 		public Scope AddVariable<TType>(Variable<TType> variable)
 		{
 			_variables.Add((ParameterExpression)variable.Expression);
@@ -84,7 +84,7 @@ namespace LittleSharp
 			return this;
 		}
 
-		public Scope Add<T>(IAdd<T> add, SmartExpression<T> value)
+		public Scope Add<TExpression, TValue>(IAdd<TExpression, TValue> add, SmartExpression<TValue> value)
 		{
 			_expressions.Add(add.Add(value).Expression);
 			return this;
@@ -229,6 +229,7 @@ namespace LittleSharp
 			_expressions.Add(Expression.Goto(scope.EndLabel));
 			return this;
 		}
+
 	}
 
 	public class Scope<TReturnValue> : Scope

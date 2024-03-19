@@ -33,6 +33,15 @@ namespace LittleSharp.Callables
 			return new CompiledAction<TInFirst, TInSecond, TInThird, TInFourth>(out first, out second, out third, out fourth);
 		}
 
+		public static CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth> Create<TInFirst, TInSecond, TInThird, TInFourth, TInFifth>(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth, out Variable<TInFifth> fifth)
+		{
+			return new CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth>(out first, out second, out third, out fourth, out fifth);
+		}
+		public static CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth> Create<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth>(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth, out Variable<TInFifth> fifth, out Variable<TInSixth> sixth)
+		{
+			return new CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth>(out first, out second, out third, out fourth, out fifth, out sixth);
+		}
+
 	}
 	public abstract class CompiledActionBase
 	{
@@ -112,4 +121,38 @@ namespace LittleSharp.Callables
 			return (Expression<Action<TInFirst, TInSecond, TInThird, TInFourth>>)_lambda.Construct(_type, new ParameterValuePairs());
 		}
 	}
+	public class CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth> : CompiledActionBase
+	{
+		Type _type = typeof(Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth>);
+		public CompiledAction(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth, out Variable<TInFifth> fifth) : base()
+		{
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
+			third = _lambda.DeclareParameter<TInThird>("third");
+			fourth = _lambda.DeclareParameter<TInFourth>("fourth");
+			fifth = _lambda.DeclareParameter<TInFifth>("fifth");
+		}
+		public Expression<Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth>> Construct()
+		{
+			return (Expression<Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth>>)_lambda.Construct(_type, new ParameterValuePairs());
+		}
+	}
+	public class CompiledAction<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth> : CompiledActionBase
+	{
+		Type _type = typeof(Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth>);
+		public CompiledAction(out Variable<TInFirst> first, out Variable<TInSecond> second, out Variable<TInThird> third, out Variable<TInFourth> fourth, out Variable<TInFifth> fifth, out Variable<TInSixth> sixth) : base()
+		{
+			first = _lambda.DeclareParameter<TInFirst>("first");
+			second = _lambda.DeclareParameter<TInSecond>("second");
+			third = _lambda.DeclareParameter<TInThird>("third");
+			fourth = _lambda.DeclareParameter<TInFourth>("fourth");
+			fifth = _lambda.DeclareParameter<TInFifth>("fifth");
+			sixth = _lambda.DeclareParameter<TInSixth>("sixth");
+		}
+		public Expression<Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth>> Construct()
+		{
+			return (Expression<Action<TInFirst, TInSecond, TInThird, TInFourth, TInFifth, TInSixth>>)_lambda.Construct(_type, new ParameterValuePairs());
+		}
+	}
+
 }

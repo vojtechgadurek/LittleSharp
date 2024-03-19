@@ -35,7 +35,7 @@ namespace LittleSharp.Literals
 			return new Table<TValue, TValueHeld>(this);
 		}
 
-		public Set<TValue, TValueHeld> ToSet<TValueHeld>()
+		public ISimpleSet<TValue, TValueHeld> ToSet<TValueHeld>()
 		{
 			return new Set<TValue, TValueHeld>(this);
 		}

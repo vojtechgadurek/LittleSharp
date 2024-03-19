@@ -39,14 +39,14 @@ namespace LittleSharp.Callables
 		{
 			ReturnValue = null;
 		}
-		internal Variable<T> DeclareParameter<T>(string name)
+		public Variable<T> DeclareParameter<T>(string name)
 		{
 			var parameter = new Variable<T>(name);
 			_parameters.Add(parameter);
 			return parameter;
 		}
 
-		internal Lambda DeclareParameter<TValue>(string name, out Variable<TValue> variable)
+		public Lambda DeclareParameter<TValue>(string name, out Variable<TValue> variable)
 		{
 			var v = DeclareParameter<TValue>(name);
 			variable = v;

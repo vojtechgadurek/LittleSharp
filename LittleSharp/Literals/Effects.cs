@@ -9,18 +9,18 @@ namespace LittleSharp.Literals
 {
 	public interface ISmartExpression<TExpression>
 	{
-		SmartExpression<TExpression> V { get; }
+		public SmartExpression<TExpression> V { get; }
 	}
 	public interface IAdd<TExpression, TValue> : ISmartExpression<TExpression>
 	{
-		SmartExpression<NoneType> Add(SmartExpression<TValue> value)
+		public SmartExpression<NoneType> Add(SmartExpression<TValue> value)
 		{
 			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Add")!, value.Expression));
 		}
 	}
 	public interface IRemove<TExpression, TValue> : ISmartExpression<TExpression>
 	{
-		SmartExpression<NoneType> Remove(SmartExpression<TValue> value)
+		public SmartExpression<NoneType> Remove(SmartExpression<TValue> value)
 		{
 			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Remove")!, value.Expression));
 		}
@@ -28,7 +28,7 @@ namespace LittleSharp.Literals
 
 	public interface IContains<TExpression, TValue> : ISmartExpression<TExpression>
 	{
-		SmartExpression<bool> Contains(SmartExpression<TValue> value)
+		public SmartExpression<bool> Contains(SmartExpression<TValue> value)
 		{
 			return new SmartExpression<bool>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Contains")!, value.Expression));
 		}
@@ -36,7 +36,7 @@ namespace LittleSharp.Literals
 
 	public interface ICount : ISmartExpression<int>
 	{
-		SmartExpression<int> Count()
+		public SmartExpression<int> Count()
 		{
 			return new SmartExpression<int>(Expression.Call(V.Expression, typeof(ICollection<>).GetMethod("Count")!));
 		}
