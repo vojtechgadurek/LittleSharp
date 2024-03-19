@@ -10,8 +10,8 @@ Littlesharp brings the possibility to compile functions and actions for some par
 This library was mainly developed as sidequest to my Bachealor's thesis, but I decided to make it public. Bacheolor thesis had problem with large amount
 of hashing functions. The perfomance issue led mainly in two fact:
 
-	- a % b is a slow operation, but when compiler knows it in addvance, it cam be opmtimized gaining circa 3 times faster execution
-	- Virtual calls are expensive for small functions, that are repeated many times and lies in hotpath
+- a % b is a slow operation, but when compiler knows it in addvance, it cam be opmtimized gaining circa 3 times faster execution
+- Virtual calls are expensive for small functions, that are repeated many times and lies in hotpath
 
 Both of those charaterize most of hashing functions.
 
@@ -33,9 +33,9 @@ There are three main types in this library:
 
 The main goal of this library is to provide better expierence writing expression trees.  These are the main goals of this library:
 
-	- Bad Expression Trees should fail during compilation 
-	- The code should be easy to read and write
-	- The code should be easy to maintain
+- Bad Expression Trees should fail during compilation 
+- The code should be easy to read and write
+- The code should be easy to maintain
 
 Example of usage:
 
