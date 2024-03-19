@@ -9,6 +9,10 @@ using LittleSharp.Callables;
 
 namespace LittleSharp.Benchmarks
 {
+	public class TestAddition
+	{
+
+	}
 	public class TestDivision
 	{
 		static ulong[] ulongs;

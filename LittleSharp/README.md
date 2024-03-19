@@ -1,24 +1,23 @@
-# LittleSharp - Statically typed Expression Trees
+Here's the corrected version:
+
+# LittleSharp - Statically Typed Expression Trees
 
 ## Warning 
 
-This library is mostly experimental and more a peek into a concept than a fully functional library.
+This library is mostly experimental and serves more as a glimpse into a concept than a fully functional library.
 
-This text does not cover all api, please look to the code. It should be taken more as a primer than a full documentation.
+This text does not cover all APIs; please refer to the code. It should be considered more as a primer than comprehensive documentation.
+
+This text was partially rewritten by ChatGPT to fix grammatical and stylistic issues. If was then checked for correctness by the original author.
 
 ## Introduction
 
-Littlesharp brings the possibility to compile functions and actions for some 
-paremeters during runtime and also type safety to them.
-This library was mainly developed as sidequest to my Bachealor's thesis,
-but I decided to make it public. Bacheolor thesis had problem with large amount
-of hashing functions. The perfomance issue led mainly in two fact:
+LittleSharp brings the possibility to compile functions and actions for some parameters during runtime and also provides type safety to them. This library was mainly developed as a sidequest to my Bachelor's thesis, but I decided to make it public. My Bachelor thesis dealt with a problem involving a large number of hashing functions. The performance issue mainly arose from two factors:
 
-- a % b is a slow operation, but when compiler knows it in addvance,
-it could be opmtimized gaining circa 3 times faster execution
-- Virtual calls are expensive for small functions, that are repeated many times and lies in hotpath
+- The operation a % b is slow, but when the compiler knows it in advance, it could be optimized, resulting in around 3 times faster execution.
+- Virtual calls are expensive for small functions that are repeated many times and are on the hot path.
 
-Both of those charaterize most of hashing functions.
+Both of these characterize most hashing functions.
 
 ## Architecture
 
@@ -26,32 +25,32 @@ There are three main types in this library:
 
 ### *SmartExpression* and its typed version *SmartExpression\<T>* 
 
-*SmartExpression* represents *Expression* but with added type support
+*SmartExpression* represents an *Expression* but with added type support.
 
-### *Variable* and its typed verison *Variable\<T>*
+### *Variable* and its typed version *Variable\<T>*
 
-*Variable* represents *ParameterExpression* but with added type support
+*Variable* represents a *ParameterExpression* but with added type support.
 
 ### *Scope* and its typed version *Scope\<T>*
 
-*Scope* represents *BlockExpression* but with added type support.
+*Scope* represents a *BlockExpression* but with added type support.
 
-The main goal of this library is to provide better expierence writing expression trees.  These are the main goals of this library:
+The main goal of this library is to provide a better experience in writing expression trees. These are the main goals of this library:
 
-- Bad Expression Trees should fail during compilation 
-- The code should be easy to read and write
-- The code should be easy to maintain
-- It should not be replacement for native C# code, when performance is a concern
+- Faulty Expression Trees should fail during compilation.
+- The code should be easy to read and write.
+- The code should be easy to maintain.
+- It should not replace native C# code when performance is a concern.
 
 When to use this library:
 
-- There exists need to compile some function during runtime.
-- Solution to a problem, leads to using virtual calls, but they would lead to perfomance issues.
+- There exists a need to compile some function during runtime.
+- The solution to a problem leads to using virtual calls, but they would lead to performance issues.
 
 Do not forget:
- 
-- One always has to call compiled function from somewhere and this will be a delegate call.
-- There is some cost to compiling code during runtime, it may not be woth it, if called just several times.
+
+- One always has to call the compiled function from somewhere, and this will be a delegate call.
+- There is some cost to compiling code during runtime; it may not be worth it if called just several times.
 
 Example of usage:
 
@@ -66,61 +65,50 @@ f.S.DeclareVariable<int>(out var c_, 5)
 	.Assign(f.Output, a.V + b.V + c.V);
 ```
 
-### How it works 
+### How it Works 
 
-Variables are variable and parametares.
-Scopes are functions, actions, lambdas and scopes. They hold variables, 
-parameters and expressions to be executed. Scopes may be contained 
-in other scopes and they may also contain them.
-Variables may be used only from scope they are declared in or from any scope declared in same scope. 
-*SmartExpression\<T>* are just expression with type safety and added operators.
+Variables are variables and parameters.
+Scopes are functions, actions, lambdas, and scopes. They hold variables, parameters, and expressions to be executed. Scopes may be contained in other scopes, and they may also contain them. Variables may be used only from the scope they are declared in or from any scope declared in the same scope. *SmartExpression\<T>* are just expressions with type safety and added operators.
 
-Variables may hold value. This value may be accessed in field *V*, where *V* is abbreviation for *Value*. 
+Variables may hold a value. This value may be accessed in the field *V*, where *V* is an abbreviation for *Value*. 
 
-It is important to understand, how expression works. Every scope holds list of expressions, 
-thus order of their execution on the order when they are inserted to this list. Most of methods on Scope does
-not add any expression to the expression list. Only Assign does so and AddExpression does so. This may seem counterintuitive,
-but is important to remmeber, if function does not change state, there is no need to execute it (Most of the time :D).
+It is important to understand how expressions work. Every scope holds a list of expressions, thus the order of their execution is the order in which they are inserted into this list. Most of the methods on Scope do not add any expression to the expression list. Only Assign does so, and AddExpression does so. This may seem counterintuitive, but it is important to remember that if a function does not change state, there is no need to execute it (most of the time :D).
 ```csharp
 
-// Declares a new scope
+// Declare a new scope
 var scope = new Scope();
 
-// Creates new parameter
+// Create a new parameter
 scope.DeclareVariable<int>(a, 0)
 	// Return expression giving a + 5
-	// Marco does not add to expression list
+	// Marco does not add to the expression list
 	// Thus a + 5 is not executed
 	.Marco(var out b, a.V + 5)
 	// Assigns a + 5 to a 
 	// thus now a = b = a + 5 = 0 + 5 = 5
-	.Assign(a, b)
+	.Assign(a, b);
 
-var value = scope.Construct()  // Returns SmartExpression<NoneType> that represents scope without return value
-// SmartExpression<NoneType> is just wrapper for Expression so it may hold some 
-// value and for block statements, it is the value of last expression
-// We may use this knowlede to force type, this may fail if the last expression is not int
+var value = scope.Construct();  // Returns SmartExpression<NoneType> that represents a scope without a return value
+// SmartExpression<NoneType> is just a wrapper for Expression so it may hold some 
+// value and for block statements, it is the value of the last expression
+// We may use this knowledge to force type; this may fail if the last expression is not int
 
-value.ForceType<int>() // Returns Int>
+value.ForceType<int>(); // Returns Int>
 ```
 
-Sometimes we want to have a scope return some value. Thus one should use *Scope<\T>*. 
-Every scope with return value holds a *Output* variable, which may be used as a return value. 
-Also sometimes, we may want to go the the end of the scope. May use *scope.GotoEnd( SCOPE_WHICH_END_TO_USE)*. Any scope may go end
-of any containg scope. This is equvalent to *return*, *continue*, *break* in C#.
+Sometimes we want to have a scope return some value. Thus one should use *Scope<\T>*. Every scope with a return value holds an *Output* variable, which may be used as a return value. Also sometimes, we may want to go to the end of the scope. We may use *scope.GotoEnd(SCOPE_WHICH_END_TO_USE)*. Any scope may go to the end of any containing scope. This is equivalent to *return*, *continue*, *break* in C#.
 ```csharp
 var scope = new Scope<int>();
 scope.DeclareVariable<int>(a, 0)
 	.Assign(a, 5)
 	.Assign(scope.Output, a.V)
 	.GotoEnd(scope);
-	//Any code afeter this will not be executed
+	// Any code after this will not be executed
 	.Assign(scope.Output, 10)
-	.Construct(); // Returns SmartExpression<int> holding expresison tree retunning 5.
+	.Construct(); // Returns SmartExpression<int> holding expression tree returning 5.
 ```
 
-Is is important to remember, that *construct* method does not execute the code. It just creates the expression tree,
-that needs to be compiled to be executed, we may use this to create macros.
+It is important to remember that the *Construct* method does not execute the code. It just creates the expression tree that needs to be compiled to be executed. We may use this to create macros.
 
 ```csharp
 
@@ -135,20 +123,17 @@ scope.DeclareVariable<int>(i_, 0)
 
 #### Effects
 This library works fine for simple types, but sometimes we would like to use more complex types. 
-##### May I have a dream
-Let's have some variable *a* being *SmartExpresion\<T\>* and *T* is some type with method *A()*, what we would like
-to be able to call *a.A()* and get *Expression.Call(a.Expression, typeof(T).GetMethod("A"))*.
-This is not possible in C# without lot of work. The workouround is to add such method to *Scope* using extension methods and create
-interface *IMedthodName*. Than we just need to have way to tell the compiler, that *a* is of type *IMethodName* and we are done.
+##### May I Have a Dream
+Let's have some variable *a* being *SmartExpression\<T\>* and *T* is some type with method *A()*, what we would like is to be able to call *a.A()* and get *Expression.Call(a.Expression, typeof(T).GetMethod("A"))*. This is not possible in C# without a lot of work. The workaround is to add such a method to *Scope* using extension methods and create the interface *IMethodName*. Then we just need to have a way to tell the compiler that *a* is of type *IMethodName*, and we are done.
 
-Will do this by adding another extension method to Scope with name *ToTypeName*, returning such name.
-As this project was mainly developed as sidequest to my Bachealor's thesis. I hardcoded some *effect*. Such as *ISet* which is child of
-*IAdd*, *IContains*, *IRemove*.
+We will do this by adding another extension method to Scope with the name *ToTypeName*, returning such a name. As this project was mainly developed as a sidequest to my Bachelor's thesis, I hardcoded some *effect*. Such as *ISet* which is a child of *IAdd*, *IContains*, *IRemove*.
 
-This not ideal, but it works for the purpose of my main project. I will try to make it more general in the future.
+This is not ideal, but it works for the purpose of my main project. I will try to make it more general in the future.
 
 ##### ArrayAccess
-This is variable, that is gotten by 
+This is a variable
+
+ that is obtained by 
 
 ```csharp
 var scope = new Scope();
@@ -170,9 +155,9 @@ scope.DeclareVariable<ISet<int>>(out var set_, new HashSet<int>())
 ### Scopes
 
 #### Scope and Scope\<T> 
-They held variables, parameters and expressions together.
+They hold variables, parameters, and expressions together.
 ##### While(condition, body)
-Works as normal while loop. If condtion is true, body is executed and again condition is checked. If condition is false, the loop ends.
+Works as a normal while loop. If the condition is true, the body is executed, and again the condition is checked. If the condition is false, the loop ends.
 ```csharp
 var scope = new Scope();
 scope.DeclareVariable<int>(i, 0)
@@ -180,7 +165,7 @@ scope.DeclareVariable<int>(i, 0)
 	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 10
 ```
 ##### IfThen(condition, body)
-Works as normal if statement. If condition is true, body is executed.
+Works as a normal if statement. If the condition is true, the body is executed.
 ```csharp
 var scope = new Scope();
 scope.DeclareVariable<int>(i, 0)
@@ -188,7 +173,7 @@ scope.DeclareVariable<int>(i, 0)
 	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 1
 ```
 ##### IfThenElse(condition, ifTrue, ifFalse)
-Works as normal if else statement. If condition is true, ifTrue is executed, if condition is false, ifFalse is executed.
+Works as a normal if-else statement. If the condition is true, ifTrue is executed, if the condition is false, ifFalse is executed.
 ```csharp
 var scope = new Scope();
 scope.DeclareVariable<int>(i, 0)
@@ -196,22 +181,18 @@ scope.DeclareVariable<int>(i, 0)
 	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 1
 ```
 ##### DeclareVariable\<T>(out Variable\<T> var, T value)
-Declares new variable of type T and assigns value to it.
+Declares a new variable of type T and assigns a value to it.
 
 ###### Function(function, params, out output) and Action(action, params)
-Runs a action or function with given parameters. If function is used, it returns value of function to output.
-It adds a invocation expression to the expression list.
+Runs an action or function with given parameters. If a function is used, it returns the value of the function to output. It adds an invocation expression to the expression list.
 
 #### Lambda and Lambda\<T>
-Inherits scope adds possibility to declare parameters. 
+Inherits scope and adds the possibility to declare parameters. 
 ##### DeclareParameter\<T>
-Declares parameter of type T
+Declares a parameter of type T.
 
 ##### Construct(), Construct(ValueParameterPairs valPair)
-Returns Expression, that is *Expression<Action<T1 ... TN>>* for *Lambda* or  *Expression<Fucn<T1 ... TN, TOutput>>* for *Lambda\<TOutput>*,
-where *T1* ... *TN* are types of unasigned parameters. 
-By providing *ValueParameterPairs* we may assign values to parameters, than these types disappear from the signature.
-Types in signature are accoring to the order of declaration of parameters.
+Returns an Expression that is *Expression<Action<T1 ... TN>>* for *Lambda* or *Expression<Func<T1 ... TN, TOutput>>* for *Lambda\<TOutput>*, where *T1* ... *TN* are types of unasigned parameters. By providing *ValueParameterPairs* we may assign values to parameters; then these types disappear from the signature. Types in the signature are according to the order of declaration of parameters.
 
 
 ```csharp
@@ -219,29 +200,23 @@ var lambda = new Lambda<int>();
 lambda
 	.DeclareParameter<int>(a)
 	.DeclareParameter<int>(b)
-	.Assign(lambda.Output, a.V + b.V)
+	.Assign(lambda.Output, a.V + b.V);
 
-// Is equvalient to f1 = (a, b) => a + b
+// Is equivalent to f1 = (a, b) => a + b
 Expression<Func<int, int, int>> f1 = (Expression<Func<int, int, int>>) lambda.Construct();
 
-// Is equvalient to f2 = (a) => a + 0
+// Is equivalent to f2 = (a) => a + 0
 Expression<Func<int, int>> f2 = (Expression<Func<int, int>>) lambda.Construct(new ValuePair.Add(a, 0));
 ```
 
 #### *CompiledFunction<T1 ... TN, TOutput>* and *CompiledAction\<T1 ... TN, TOutput>*
-They wraps *Lambda*. Their main advantage is, 
-that their singature does not change and they disallow to declaring new parametrer. Also as signature of function is known in advance,
-we may return *Expression<Action<T1 ... TN>>* for *CompiledAction* and *Expression<Func<T1 ... TN, TOutput>>* for *CompiledFunction*.
+They wrap *Lambda*. Their main advantage is that their signature does not change, and they disallow declaring new parameters. Also, as the signature of the function is known in advance, we may return *Expression<Action<T1 ... TN>>* for *CompiledAction* and *Expression<Func<T1 ... TN, TOutput>>* for *CompiledFunction*.
 
 ##### *S*
-*S* field allows to access to a the lambda, that is wrapped by *CompiledFunction* or *CompiledAction*. It is returned as
-*Scope* to protect user from declaring new parameters.
+*S* field allows accessing the lambda that is wrapped by *CompiledFunction* or *CompiledAction*. It is returned as a *Scope* to protect the user from declaring new parameters.
 
 ```csharp
 // Declare a function with two parameters a and b
 var f = CompiledFunction.Create<int, int, int>(out var a_, out var b_);
 f.S.Assign(f.Output, a.V + b.V);
 ```
-
-
-
