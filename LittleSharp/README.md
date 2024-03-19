@@ -147,6 +147,9 @@ As this project was mainly developed as sidequest to my Bachealor's thesis. I ha
 
 This not ideal, but it works for the purpose of my main project. I will try to make it more general in the future.
 
+##### ArrayAccess
+This is variable, that is gotten by 
+
 ```csharp
 var scope = new Scope();
 scope.DeclareVariable<ISet<int>>(out var set_, new HashSet<int>())
@@ -198,8 +201,6 @@ Declares new variable of type T and assigns value to it.
 ###### Function(function, params, out output) and Action(action, params)
 Runs a action or function with given parameters. If function is used, it returns value of function to output.
 It adds a invocation expression to the expression list.
-
-```csharp
 
 #### Lambda and Lambda\<T>
 Inherits scope adds possibility to declare parameters. 

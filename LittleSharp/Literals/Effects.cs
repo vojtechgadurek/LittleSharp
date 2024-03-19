@@ -45,4 +45,15 @@ namespace LittleSharp.Literals
 	public interface ISimpleSet<TSet, TValue> : IAdd<TSet, TValue>, IRemove<TSet, TValue>, IContains<TSet, TValue>
 	{
 	}
+
+	public interface IArrayAccessable<T, TValueHeld> : ISmartExpression<T>
+	{
+		public SmartExpression<TValueHeld> this[SmartExpression<int> index]
+		{
+			get
+			{
+				return new SmartExpression<TValueHeld>(Expression.ArrayAccess(V.Expression, index.Expression));
+			}
+		}
+	}
 }
