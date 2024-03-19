@@ -4,6 +4,8 @@
 
 This library is mostly experimental and more a peek into a concept than a fully functional library.
 
+This text does not cover all api, please look to the code. It should be taken more as a primer than a full documentation.
+
 ## Introduction
 
 Littlesharp brings the possibility to compile functions and actions for some 
@@ -39,6 +41,17 @@ The main goal of this library is to provide better expierence writing expression
 - Bad Expression Trees should fail during compilation 
 - The code should be easy to read and write
 - The code should be easy to maintain
+- It should not be replacement for native C# code, when performance is a concern
+
+When to use this library:
+
+- There exists need to compile some function during runtime.
+- Solution to a problem, leads to using virtual calls, but they would lead to perfomance issues.
+
+Do not forget:
+ 
+- One always has to call compiled function from somewhere and this will be a delegate call.
+- There is some cost to compiling code during runtime, it may not be woth it, if called just several times.
 
 Example of usage:
 
@@ -120,6 +133,35 @@ scope.DeclareVariable<int>(i_, 0)
 	.Construct(); // Returns SmartExpression<int> holding expression tree returning 10
 ```
 
+#### Effects
+This library works fine for simple types, but sometimes we would like to use more complex types. 
+##### May I have a dream
+Let's have some variable *a* being *SmartExpresion\<T\>* and *T* is some type with method *A()*, what we would like
+to be able to call *a.A()* and get *Expression.Call(a.Expression, typeof(T).GetMethod("A"))*.
+This is not possible in C# without lot of work. The workouround is to add such method to *Scope* using extension methods and create
+interface *IMedthodName*. Than we just need to have way to tell the compiler, that *a* is of type *IMethodName* and we are done.
+
+Will do this by adding another extension method to Scope with name *ToTypeName*, returning such name.
+As this project was mainly developed as sidequest to my Bachealor's thesis. I hardcoded some *effect*. Such as *ISet* which is child of
+*IAdd*, *IContains*, *IRemove*.
+
+This not ideal, but it works for the purpose of my main project. I will try to make it more general in the future.
+
+```csharp
+var scope = new Scope();
+scope.DeclareVariable<ISet<int>>(out var set_, new HashSet<int>())
+	.ToSet(set_, set_SET)
+	// .Add(set, 5)  does not compile
+	.Add(set_SET, 5)
+	.Add(set_SET, 10)
+	.Add(set_SET, 15)
+	.Remove(set_SET, 10)
+	.Contains(set_SET, 5, out var check) // check is SmartExpression<bool> holding expression tree returning true
+	.Contains(set_SET, 10, out var check2) // check2 is SmartExpression<bool> holding expression tree returning false
+	.Construct(); // Returns SmartExpression<bool> holding expression tree returning true
+```
+
+
 ## Classes
 
 ### Scopes
@@ -155,7 +197,7 @@ Declares new variable of type T and assigns value to it.
 
 ###### Function(function, params, out output) and Action(action, params)
 Runs a action or function with given parameters. If function is used, it returns value of function to output.
-IItt
+It adds a invocation expression to the expression list.
 
 ```csharp
 
