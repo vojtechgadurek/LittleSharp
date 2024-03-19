@@ -60,12 +60,12 @@ Scopes are functions, actions, lambdas and scopes. They hold variables,
 parameters and expressions to be executed. Scopes may be contained 
 in other scopes and they may also contain them.
 Variables may be used only from scope they are declared in or from any scope declared in same scope. 
-SmartExpression\<T> are just expression with type safety and added operators.
+*SmartExpression\<T>* are just expression with type safety and added operators.
 
 Variables may hold value. This value may be accessed in field *V*, where *V* is abbreviation for *Value*. 
 
-It is important to understand, how expression works. Every scope hold list of expressions, 
-thus order of their execution on the order when they inserted to this list. Most of methods on Scope does
+It is important to understand, how expression works. Every scope holds list of expressions, 
+thus order of their execution on the order when they are inserted to this list. Most of methods on Scope does
 not add any expression to the expression list. Only Assign does so and AddExpression does so. This may seem counterintuitive,
 but is important to remmeber, if function does not change state, there is no need to execute it (Most of the time :D).
 ```csharp
@@ -78,7 +78,7 @@ scope.DeclareVariable<int>(a, 0)
 	// Return expression giving a + 5
 	// Marco does not add to expression list
 	// Thus a + 5 is not executed
-	.Marco(var out b, a + 5)
+	.Marco(var out b, a.V + 5)
 	// Assigns a + 5 to a 
 	// thus now a = b = a + 5 = 0 + 5 = 5
 	.Assign(a, b)
@@ -99,7 +99,7 @@ of any containg scope. This is equvalent to *return*, *continue*, *break* in C#.
 var scope = new Scope<int>();
 scope.DeclareVariable<int>(a, 0)
 	.Assign(a, 5)
-	.Assign(scope.Output, a)
+	.Assign(scope.Output, a.V)
 	.GotoEnd(scope);
 	//Any code afeter this will not be executed
 	.Assign(scope.Output, 10)
@@ -113,10 +113,42 @@ that needs to be compiled to be executed, we may use this to create macros.
 
 var scope = new Scope<int>();
 scope.DeclareVariable<int>(i_, 0)
-	.Marco(out var macro, new Scope().Assign(i_, i_ + 5))
+	.Marco(out var macro, new Scope().Assign(i_, i_.V + 5))
 	.AddExpression(macro)
 	.AddExpression(macro)
 	.Assign(scope.Output, i_)
 	.Construct(); // Returns SmartExpression<int> holding expression tree returning 10
 ```
+
+## Classes
+
+### Scopes
+
+#### Scope and Scope\<T> 
+They held variables, parameters and expressions together.
+#### Lambda and Lambda\<T>
+Inherits scope adds possibility to declare parameters. 
+##### DeclareParameter\<T>
+Declares parameter of type T
+##### Construct(), Construct(ValueParameterPairs valPair)
+Returns Expression, that is *Expression<Action<T1 ... TN>>* for *Lambda* or  *Expression<Fucn<T1 ... TN, TOutput>>* for *Lambda\<TOutput>*,
+where *T1* ... *TN* are types of unasigned parameters. 
+By providing *ValueParameterPairs* we may assign values to parameters, than these types disappear from the signature.
+Types in signature are accoring to the order of declaration of parameters.
+
+```csharp
+var lambda = new Lambda<int>();
+lambda
+	.DeclareParameter<int>(a)
+	.DeclareParameter<int>(b)
+	.Assign(lambda.Output, a.V + b.V)
+
+// Is equvalient to f1 = (a, b) => a + b
+Expression<Func<int, int, int>> f1 = (Expression<Func<int, int, int>>) lambda.Construct();
+
+// Is equvalient to f2 = (a) => a + 0
+Expression<Func<int, int>> f2 = (Expression<Func<int, int>>) lambda.Construct(new ValuePair.Add(a, 0));
+```
+
+
 
