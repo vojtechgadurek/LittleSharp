@@ -2,7 +2,7 @@
 
 ## Warning 
 
-This library is mostly experimental and more a snaphot, what it can be
+This library is mostly experimental and more a peek into a concept than a fully functional library.
 
 ## Introduction
 
@@ -85,7 +85,7 @@ scope.DeclareVariable<int>(a, 0)
 
 var value = scope.Construct()  // Returns SmartExpression<NoneType> that represents scope without return value
 // SmartExpression<NoneType> is just wrapper for Expression so it may hold some 
-value and for block statements it is the value of last expression
+// value and for block statements, it is the value of last expression
 // We may use this knowlede to force type, this may fail if the last expression is not int
 
 value.ForceType<int>() // Returns Int>
@@ -126,15 +126,50 @@ scope.DeclareVariable<int>(i_, 0)
 
 #### Scope and Scope\<T> 
 They held variables, parameters and expressions together.
+##### While(condition, body)
+Works as normal while loop. If condtion is true, body is executed and again condition is checked. If condition is false, the loop ends.
+```csharp
+var scope = new Scope();
+scope.DeclareVariable<int>(i, 0)
+	.While(i.V < 10, new Scope().Assign(i, i.V + 1))
+	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 10
+```
+##### IfThen(condition, body)
+Works as normal if statement. If condition is true, body is executed.
+```csharp
+var scope = new Scope();
+scope.DeclareVariable<int>(i, 0)
+	.IfThen(i.V < 10, new Scope().Assign(i, i.V + 1))
+	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 1
+```
+##### IfThenElse(condition, ifTrue, ifFalse)
+Works as normal if else statement. If condition is true, ifTrue is executed, if condition is false, ifFalse is executed.
+```csharp
+var scope = new Scope();
+scope.DeclareVariable<int>(i, 0)
+	.IfThenElse(i.V < 10, new Scope().Assign(i, i.V + 1), new Scope().Assign(i, i.V + 2))
+	.Construct(); // Returns SmartExpression<NoneType> holding expression tree returning 1
+```
+##### DeclareVariable\<T>(out Variable\<T> var, T value)
+Declares new variable of type T and assigns value to it.
+
+###### Function(function, params, out output) and Action(action, params)
+Runs a action or function with given parameters. If function is used, it returns value of function to output.
+IItt
+
+```csharp
+
 #### Lambda and Lambda\<T>
 Inherits scope adds possibility to declare parameters. 
 ##### DeclareParameter\<T>
 Declares parameter of type T
+
 ##### Construct(), Construct(ValueParameterPairs valPair)
 Returns Expression, that is *Expression<Action<T1 ... TN>>* for *Lambda* or  *Expression<Fucn<T1 ... TN, TOutput>>* for *Lambda\<TOutput>*,
 where *T1* ... *TN* are types of unasigned parameters. 
 By providing *ValueParameterPairs* we may assign values to parameters, than these types disappear from the signature.
 Types in signature are accoring to the order of declaration of parameters.
+
 
 ```csharp
 var lambda = new Lambda<int>();
@@ -148,6 +183,21 @@ Expression<Func<int, int, int>> f1 = (Expression<Func<int, int, int>>) lambda.Co
 
 // Is equvalient to f2 = (a) => a + 0
 Expression<Func<int, int>> f2 = (Expression<Func<int, int>>) lambda.Construct(new ValuePair.Add(a, 0));
+```
+
+#### *CompiledFunction<T1 ... TN, TOutput>* and *CompiledAction\<T1 ... TN, TOutput>*
+They wraps *Lambda*. Their main advantage is, 
+that their singature does not change and they disallow to declaring new parametrer. Also as signature of function is known in advance,
+we may return *Expression<Action<T1 ... TN>>* for *CompiledAction* and *Expression<Func<T1 ... TN, TOutput>>* for *CompiledFunction*.
+
+##### *S*
+*S* field allows to access to a the lambda, that is wrapped by *CompiledFunction* or *CompiledAction*. It is returned as
+*Scope* to protect user from declaring new parameters.
+
+```csharp
+// Declare a function with two parameters a and b
+var f = CompiledFunction.Create<int, int, int>(out var a_, out var b_);
+f.S.Assign(f.Output, a.V + b.V);
 ```
 
 
