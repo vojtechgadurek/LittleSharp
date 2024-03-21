@@ -9,8 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LittleSharp.Literals;
 using LittleSharp.Callables;
-using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
-using LittleSharp.Scopes;
 
 namespace LittleSharp
 {
@@ -166,6 +164,29 @@ namespace LittleSharp
 			output = new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression, value3.Expression, value4.Expression));
 			return this;
 		}
+
+		public SmartExpression<TOut> Function<TOut>(Expression<Func<TOut>> action)
+		{
+			return new SmartExpression<TOut>(Expression.Invoke(action));
+		}
+
+		public SmartExpression<TOut> Function<T1, TOut>(Expression<Func<T1, TOut>> action, SmartExpression<T1> value1)
+		{
+			return new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression));
+		}
+
+
+		public SmartExpression<TOut> Function<T1, T2, TOut>(Expression<Func<T1, T2, TOut>> action, SmartExpression<T1> value1, SmartExpression<T2> value2)
+		{
+			return new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression));
+		}
+
+
+		public SmartExpression<TOut> Function<T1, T2, T3, TOut>(Expression<Func<T1, T2, T3, TOut>> action, SmartExpression<T1> value1, SmartExpression<T2> value2, SmartExpression<T3> value3)
+		{
+			return new SmartExpression<TOut>(Expression.Invoke(action, value1.Expression, value2.Expression, value3.Expression));
+		}
+
 		#endregion
 		public Scope This(out Scope thisScope)
 		{
@@ -199,6 +220,15 @@ namespace LittleSharp
 		public Scope AddExpression<T>(SmartExpression<T> expression)
 		{
 			_expressions.Add(expression.Expression);
+			return this;
+		}
+
+		public Scope AddExpressions<T>(IEnumerable<SmartExpression<T>> expressions)
+		{
+			foreach (var ex in expressions)
+			{
+				AddExpression(ex);
+			}
 			return this;
 		}
 

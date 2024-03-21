@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LittleSharp.Literals
 {
@@ -44,6 +45,7 @@ namespace LittleSharp.Literals
 
 	public interface ISimpleSet<TSet, TValue> : IAdd<TSet, TValue>, IRemove<TSet, TValue>, IContains<TSet, TValue>
 	{
+
 	}
 
 	public interface IArrayAccessable<T, TValueHeld> : ISmartExpression<T>
