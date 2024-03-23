@@ -16,14 +16,14 @@ namespace LittleSharp.Literals
 	{
 		public SmartExpression<NoneType> Add(SmartExpression<TValue> value)
 		{
-			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Add")!, value.Expression));
+			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TExpression).GetMethod("Add")!, value.Expression));
 		}
 	}
 	public interface IRemove<TExpression, TValue> : ISmartExpression<TExpression>
 	{
 		public SmartExpression<NoneType> Remove(SmartExpression<TValue> value)
 		{
-			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Remove")!, value.Expression));
+			return new SmartExpression<NoneType>(Expression.Call(V.Expression, typeof(TExpression).GetMethod("Remove")!, value.Expression));
 		}
 	}
 
@@ -31,7 +31,7 @@ namespace LittleSharp.Literals
 	{
 		public SmartExpression<bool> Contains(SmartExpression<TValue> value)
 		{
-			return new SmartExpression<bool>(Expression.Call(V.Expression, typeof(TValue).GetMethod("Contains")!, value.Expression));
+			return new SmartExpression<bool>(Expression.Call(V.Expression, typeof(TExpression).GetMethod("Contains")!, value.Expression));
 		}
 	}
 

@@ -16,6 +16,7 @@ namespace LittleSharp
 	{
 		protected List<ParameterExpression> _variables = new List<ParameterExpression>();
 		protected List<Expression> _expressions = new List<Expression>();
+		protected List<Expression> _finalizerExpression = new List<Expression>();
 		public readonly LabelTarget EndLabel = Expression.Label("End");
 		string? _name;
 		public Scope(string? name = null)
@@ -27,7 +28,7 @@ namespace LittleSharp
 			return new SmartExpression<NoneType>(
 				Expression.Block(
 					_variables,
-					_expressions.Append(Expression.Label(EndLabel))
+					_expressions.Append(Expression.Label(EndLabel)).Concat(_finalizerExpression)
 					)
 				);
 
@@ -70,6 +71,11 @@ namespace LittleSharp
 			return this;
 		}
 
+		public Scope AddFinalizer(Scope expression)
+		{
+			_finalizerExpression.Add(expression.Construct().Expression);
+			return this;
+		}
 		public Scope Assign<T>(ILiteral<T> variable, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(variable.GetExpression(), value.Expression));
@@ -253,6 +259,7 @@ namespace LittleSharp
 			_expressions.Add(expression);
 			return this;
 		}
+
 
 		public Scope GoToEnd(Scope scope)
 		{
