@@ -19,10 +19,14 @@ namespace LittleSharp
 		protected List<Expression> _finalizerExpression = new List<Expression>();
 		public readonly LabelTarget EndLabel = Expression.Label("End");
 		string? _name;
-		public Scope(string? name = null)
+		// This is little hack for debugging, should not be used for any other purpose
+		// Rewrite of the architecture is needed to make it more safe
+		public static object? _debugOutput = null;
+		public Scope(string? name = null, TextWriter? _output = null)
 		{
 			this._name = name;
 		}
+
 		public SmartExpression<NoneType> Construct()
 		{
 			return new SmartExpression<NoneType>(
@@ -82,6 +86,18 @@ namespace LittleSharp
 			return this;
 		}
 
+		public Scope Print(SmartExpression<string> text)
+		{
+			if (_debugOutput == null)
+			{
+				_expressions.Add(Expression.Call(typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) }), text.Expression));
+			}
+			else
+			{
+				_expressions.Add(Expression.Call(Expression.Constant(_debugOutput), _debugOutput.GetType().GetMethod("WriteLine", new Type[] { typeof(string) }), text.Expression));
+			}
+			return this;
+		}
 		public Scope ArrayAssing<T>(Variable<T> variable, SmartExpression<int> index, SmartExpression<T> value)
 		{
 			_expressions.Add(Expression.Assign(Expression.ArrayAccess(variable.Expression, index.Expression), value.Expression));

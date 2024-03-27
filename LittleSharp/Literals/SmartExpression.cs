@@ -63,6 +63,11 @@ namespace LittleSharp.Literals
 			return new SmartExpression<TValue>(Expression.Field(Expression, field));
 		}
 
+		public SmartExpression<string> ToStringExpression()
+		{
+			return new SmartExpression<string>(Expression.Call(Expression, typeof(object).GetMethod("ToString")!));
+		}
+
 		#region Operators
 		public static SmartExpression<TValue> operator +(SmartExpression<TValue> a, SmartExpression<TValue> b)
 		{
