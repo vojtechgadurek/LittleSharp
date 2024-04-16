@@ -1,4 +1,3 @@
-Here's the corrected version:
 
 # LittleSharp - Statically Typed Expression Trees
 
