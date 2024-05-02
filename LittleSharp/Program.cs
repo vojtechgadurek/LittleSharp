@@ -8,7 +8,6 @@ namespace LittleSharp
 	{
 		static void Main(string[] args)
 		{
-			var summary = BenchmarkRunner.Run<TestDivision>();
 		}
 	}
 }

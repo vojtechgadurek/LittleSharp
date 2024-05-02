@@ -53,14 +53,25 @@ namespace LittleSharp.Literals
 			return new SmartExpression<TValue>(Expression.Constant(value));
 		}
 
-		public SmartExpression<TValue> Call(MethodInfo method, params SmartExpression[] parameters)
+		public SmartExpression<TAnswer> Call<TAnswer>(MethodInfo method, params SmartExpression[] parameters)
 		{
-			return new SmartExpression<TValue>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
+			return new SmartExpression<TAnswer>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
 		}
 
-		public SmartExpression<TValue> Field(FieldInfo field)
+		public SmartExpression<TAnswer> Call<TAnswer>(string name, params SmartExpression[] parameters)
 		{
-			return new SmartExpression<TValue>(Expression.Field(Expression, field));
+			return Call<TAnswer>(typeof(TValue).GetMethod(name)!, parameters);
+		}
+
+
+		public SmartExpression<TAnswer> Field<TAnswer>(FieldInfo field)
+		{
+			return new SmartExpression<TAnswer>(Expression.Field(Expression, field));
+		}
+
+		public SmartExpression<TAnswer> Field<TAnswer>(string name)
+		{
+			return Field<TAnswer>(typeof(TValue).GetField(name)!);
 		}
 
 		public SmartExpression<string> ToStringExpression()
