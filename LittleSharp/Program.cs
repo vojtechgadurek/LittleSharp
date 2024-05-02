@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
 using System.Numerics;
-using LittleSharp.Benchmarks;
 
 namespace LittleSharp
 {
