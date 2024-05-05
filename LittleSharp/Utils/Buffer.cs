@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace LittleSharp.Utils
 {
 
-	public static class Buffers
+	public static class Buffering
 	{/// <summary>
 	 /// Takes a function f2 : (a -> b) and returns action f2 : (a[] -> b[] -> int -> int -> void)
 	 /// a[] input, b[] output, int start, int size
