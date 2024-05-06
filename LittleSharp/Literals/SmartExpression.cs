@@ -55,7 +55,7 @@ namespace LittleSharp.Literals
 
 		public SmartExpression<TAnswer> Call<TAnswer>(MethodInfo method, params SmartExpression[] parameters)
 		{
-			return new SmartExpression<TAnswer>(Expression.Call(method, parameters.Select(x => x.Expression).ToArray()));
+			return new SmartExpression<TAnswer>(Expression.Call(Expression, method, parameters.Select(x => x.Expression).ToArray()));
 		}
 
 		public SmartExpression<TAnswer> Call<TAnswer>(string name, params SmartExpression[] parameters)
