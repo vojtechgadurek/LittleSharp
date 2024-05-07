@@ -283,6 +283,21 @@ namespace LittleSharp
 			return this;
 		}
 
+
+		public Scope BuildAction<T>(Action<T> action, T values)
+		{
+			action(values);
+			return this;
+		}
+
+		public Scope BuildAction<T>(Action<T> action, IEnumerable<T> values)
+		{
+			foreach (var item in values)
+			{
+				BuildAction(action, item);
+			}
+			return this;
+		}
 	}
 
 	public class Scope<TReturnValue> : Scope
