@@ -60,7 +60,10 @@ namespace LittleSharp.Literals
 
 		public SmartExpression<TAnswer> Call<TAnswer>(string name, params SmartExpression[] parameters)
 		{
-			return Call<TAnswer>(typeof(TValue).GetMethod(name)!, parameters);
+
+			var func = typeof(TValue).GetMethod(name);
+			if (func is null) throw new InvalidOperationException($"{name} is not a method of {typeof(TValue).Name}");
+			return Call<TAnswer>(func, parameters);
 		}
 
 
@@ -71,8 +74,29 @@ namespace LittleSharp.Literals
 
 		public SmartExpression<TAnswer> Field<TAnswer>(string name)
 		{
+			var field = typeof(TValue).GetField(name);
+			if (field is null) throw new InvalidOperationException($"{name} is not a field of {typeof(TValue).Name}, maybe it is a property");
 			return Field<TAnswer>(typeof(TValue).GetField(name)!);
 		}
+
+		public SmartExpression<TAnswer> Property<TAnswer>(PropertyInfo field)
+		{
+			return new SmartExpression<TAnswer>(Expression.Property(Expression, field));
+		}
+
+		public SmartExpression<TAnswer> Property<TAnswer>(string name)
+		{
+			var property = typeof(TValue).GetProperty(name);
+			if (property is null) throw new InvalidOperationException($"{name} is not a property of {typeof(TValue).Name}");
+			return Property<TAnswer>(property);
+		}
+
+		public SmartExpression<TAnswer> PropertyOrField<TAnswer>(string field)
+		{
+			return new SmartExpression<TAnswer>(Expression.PropertyOrField(Expression, field));
+		}
+
+
 
 		public SmartExpression<string> ToStringExpression()
 		{
