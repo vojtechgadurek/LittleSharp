@@ -27,6 +27,10 @@ namespace LittleSharp
 			this._name = name;
 		}
 
+		public static void SetDebugOutput(object output)
+		{
+			_debugOutput = output;
+		}
 		public SmartExpression<NoneType> Construct()
 		{
 			return new SmartExpression<NoneType>(
