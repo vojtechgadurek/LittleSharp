@@ -150,6 +150,11 @@ namespace LittleSharp
 			_expressions.Add(Expression.Invoke(action, smartExpression1.Expression, smartExpression2.Expression, smartExpression3.Expression, smartExpression4.Expression));
 			return this;
 		}
+		public Scope Action<T1, T2, T3, T4, T5>(Expression<Action<T1, T2, T3, T4, T5>> action, SmartExpression<T1> smartExpression1, SmartExpression<T2> smartExpression2, SmartExpression<T3> smartExpression3, SmartExpression<T4> smartExpression4, SmartExpression<T5> smartExpression5)
+		{
+			_expressions.Add(Expression.Invoke(action, smartExpression1.Expression, smartExpression2.Expression, smartExpression3.Expression, smartExpression4.Expression, smartExpression5.Expression));
+			return this;
+		}
 
 		#endregion
 
