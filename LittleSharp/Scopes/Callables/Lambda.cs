@@ -21,7 +21,7 @@ namespace LittleSharp.Callables
 
 	public class Lambda<T> : Lambda
 	{
-		public readonly Variable<T> Output = new Variable<T>("Ouput");
+		public readonly Variable<T> Output = new Variable<T>();
 
 		public Lambda(string? functionName = null) : base(functionName)
 		{
@@ -41,7 +41,7 @@ namespace LittleSharp.Callables
 		}
 		public Variable<T> DeclareParameter<T>(string name)
 		{
-			var parameter = new Variable<T>(name);
+			var parameter = new Variable<T>();
 			_parameters.Add(parameter);
 			return parameter;
 		}
@@ -53,9 +53,9 @@ namespace LittleSharp.Callables
 			return this;
 		}
 
-		internal IEnumerable<ParameterExpression> CreateVariablesFromAssignedParamters(ParameterValuePairs assignedParemeters)
+		internal IEnumerable<ParameterExpression> CreateVariablesFromAssignedParameters(ParameterValuePairs assignedParameters)
 		{
-			var parameters = assignedParemeters.Pairs
+			var parameters = assignedParameters.Pairs
 			   .Select(x => x.Item1.GetExpression())
 			   .Cast<ParameterExpression>();
 			if (IsAction())
@@ -100,7 +100,7 @@ namespace LittleSharp.Callables
 
 			var parametersWithAssignedValue = parameterValuePairs.Pairs;
 
-			var assignedParameters = CreateVariablesFromAssignedParamters(parameterValuePairs);
+			var assignedParameters = CreateVariablesFromAssignedParameters(parameterValuePairs);
 
 			//Create block that holds the assignments of the parameters
 			var setParametersBlock = Expression.Block(

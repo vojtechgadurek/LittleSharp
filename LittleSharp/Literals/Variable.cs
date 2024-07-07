@@ -24,11 +24,10 @@ namespace LittleSharp
 		public readonly SmartExpression<T> SmartExpression;
 		public SmartExpression<T> V { get => SmartExpression; }
 
-		public Variable(string name)
+		public Variable()
 		{
-			Name = name;
 			Type = typeof(T);
-			Expression = System.Linq.Expressions.Expression.Parameter(Type, name);
+			Expression = System.Linq.Expressions.Expression.Parameter(Type);
 			SmartExpression = new SmartExpression<T>(Expression);
 		}
 

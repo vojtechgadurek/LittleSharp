@@ -48,28 +48,22 @@ namespace LittleSharp
 			return this;
 		}
 
-		public Variable<TType> DeclareVariable<TType>(string name)
+		//ToDo Investigate, whether and why variables are actually static
+		public Variable<TType> DeclareVariable<TType>()
 		{
-			var variable = new Variable<TType>(name);
+			var variable = new Variable<TType>();
 			_variables.Add((ParameterExpression)variable.Expression);
 			return variable;
 		}
-
-		public Scope DeclareVariable<TType>(string name, out Variable<TType> variable)
-		{
-			variable = DeclareVariable<TType>(name);
-			return this;
-		}
-
 		public Scope DeclareVariable<TType>(out Variable<TType> variable)
 		{
-			variable = DeclareVariable<TType>(nameof(variable));
+			variable = DeclareVariable<TType>();
 			return this;
 		}
 
 		public Scope DeclareVariable<TType>(out Variable<TType> variable, SmartExpression<TType> value)
 		{
-			variable = DeclareVariable<TType>(nameof(variable));
+			variable = DeclareVariable<TType>();
 			_expressions.Add(Expression.Assign(variable.Expression, value.Expression));
 			return this;
 		}
@@ -314,7 +308,7 @@ namespace LittleSharp
 		public readonly Variable<TReturnValue> Output;
 		public Scope(string? name = null) : base(name)
 		{
-			Output = DeclareVariable<TReturnValue>("Output");
+			DeclareVariable<TReturnValue>(out Output, default);
 		}
 		public new SmartExpression<TReturnValue> Construct()
 		{
